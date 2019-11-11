@@ -12,4 +12,9 @@ typedef struct _OctreeNode
 } OctreeNode;
 
 
+
+OctreeNode* init_octree(char data);
+void delete_octree(OctreeNode* root);
+
+
 #endif
