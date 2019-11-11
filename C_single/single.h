@@ -8,7 +8,7 @@
 typedef struct _OctreeNode
 {
 	char data;
-	struct _OctreeNode** children;
+	struct _OctreeNode* children[8];
 } OctreeNode;
 
 

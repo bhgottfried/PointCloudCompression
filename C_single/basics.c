@@ -1,7 +1,7 @@
 #include "single.h"
 
 // Read in all of the raw text, return a string with the raw text from the input file, and save the number of characters
-char* readFile(const char* const filename, unsigned int* const length)
+char* read_file(const char* const filename, unsigned int* const length)
 {
 	if (!filename)
 	{
