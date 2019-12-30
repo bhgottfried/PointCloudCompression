@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE; 
 	}
 
-	FILE* fp = fopen(argv[2], "rb");
+	FILE* fp = fopen(argv[1], "rb");
 	if (!fp)
 	{
 		printf("Failed to open file.\n");
