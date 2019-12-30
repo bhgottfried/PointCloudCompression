@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 	if (argc != 2)
 	{
 		printf("Incorrect number of arguments.\n");
-		return EXIT_FAILURE;
+		return EXIT_FAILURE; 
 	}
 
 	FILE* fp = fopen(argv[2], "rb");
