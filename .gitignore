@@ -6,3 +6,8 @@ C_single/.vs/C_single/v15/Browse.VC.opendb
 *.tlog
 *.obj
 *.opendb
+*.ipch
+*.exe
+*.ilk
+*.log
+*.pdb
