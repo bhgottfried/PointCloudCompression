@@ -11,3 +11,16 @@ C_single/.vs/C_single/v15/Browse.VC.opendb
 *.ilk
 *.log
 *.pdb
+C_single/.vs/Point_Cloud_Compression/v15/.suo
+C_single/.vs/Point_Cloud_Compression/v15/ipch/AutoPCH/f5511e28ae18247c/SINGLE.ipch
+C_single/Debug/C_single.exe
+C_single/Debug/C_single.ilk
+C_single/Debug/C_single.log
+C_single/Debug/C_single.pdb
+C_single/Debug/C_single.tlog/CL.read.1.tlog
+C_single/Debug/C_single.tlog/CL.write.1.tlog
+C_single/Debug/octree.obj
+C_single/Debug/point.obj
+C_single/Debug/single.obj
+C_single/Debug/vc141.idb
+C_single/Debug/vc141.pdb
