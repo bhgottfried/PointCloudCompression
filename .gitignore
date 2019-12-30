@@ -1,2 +1,7 @@
 
 C_single/.vs/C_single/v15/Browse.VC.opendb
+*.exe
+*.ilk
+*.pdb
+*.tlog
+*.obj
