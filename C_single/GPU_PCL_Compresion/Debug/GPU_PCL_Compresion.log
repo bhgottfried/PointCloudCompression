@@ -1,5 +1,0 @@
-﻿  octree.c
-c:\users\ben\desktop\gpu_pcl_compresion\gpu_pcl_compresion\octree.c(81): warning C4018: '<': signed/unsigned mismatch
-  single.c
-  Generating Code...
-  GPU_PCL_Compresion.vcxproj -> C:\Users\Ben\Desktop\GPU_PCL_Compresion\Debug\GPU_PCL_Compresion.exe
