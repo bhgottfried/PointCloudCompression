@@ -18,3 +18,5 @@
 *.vcxproj
 *.filters
 *.sln
+*.json
+*.sqlite
