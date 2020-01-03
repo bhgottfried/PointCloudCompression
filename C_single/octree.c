@@ -1,7 +1,7 @@
 #include "octree.h"
 
 
-void insert(OctreeNode* root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
+void insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
 
 
 // Create a new octree node for a point object.
@@ -18,55 +18,54 @@ OctreeNode* init_node(Point* data)
 
 
 // Determine which suboctant to insert into
-void calc_bounds(OctreeNode* root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
 {
 	int childIdx = 0;
-	float midx = (ux - lx) / 2, midy = (uy - ly) / 2, midz = (uz - lz) / 2;	// Midpoints of bounds
-	float nlx = lx, nux = ux, nly = ly, nuy = uy, nlz = lz, nuz = uz;		// New bounds for insertion
+	float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
 
 	// Compare the node data to the mid points
 	if (newNode->data->coords[0] > midx)
 	{
-		nlx = midx;
+		lx = midx;
 		childIdx += 4;
 	}
 	else
 	{
-		nux = midx;
+		ux = midx;
 	}
 	if (newNode->data->coords[1] > midy)
 	{
-		nly = midy;
+		ly = midy;
 		childIdx += 2;
 	}
 	else
 	{
-		nuy = midy;
+		uy = midy;
 	}
 	if (newNode->data->coords[2] > midz)
 	{
-		nlz = midz;
+		lz = midz;
 		childIdx += 1;
 	}
 
-	insert(root->children[childIdx], newNode, nlx, nux, nly, nuy, nlz, nuz);
+	insert(&(*root)->children[childIdx], newNode, lx, ux, ly, uy, lz, uz);
 }
 
 
 // Insert octree node into the tree recursively
-void insert(OctreeNode* root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+void insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
 {
-	if (!root)
+	if (!(*root))
 	{
-		root = newNode;
+		*root = newNode;
 	}
 	else
 	{
-		if (root->data)		// Former leaf node (root) now becomes internal node and leaf data gets reinserted
+		if ((*root)->data)		// Former leaf node (root) now becomes internal node and leaf data gets reinserted
 		{
-			OctreeNode* prevNode = init_node(root->data);
-			root->data = NULL;
-			calc_bounds(root, init_node(root->data), lx, ux, ly, uy, lz, uz);
+			OctreeNode* prevNode = init_node((*root)->data);
+			(*root)->data = NULL;
+			calc_bounds(root, prevNode, lx, ux, ly, uy, lz, uz);
 		}
 		calc_bounds(root, newNode, lx, ux, ly, uy, lz, uz);
 	}
@@ -81,7 +80,7 @@ OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMi
 	for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
 	{
 		OctreeNode* node = init_node(points[ptIdx]);
-		insert(root, node, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+		insert(&root, node, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 	}
 
 	return root;
