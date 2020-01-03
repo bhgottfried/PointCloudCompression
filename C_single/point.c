@@ -81,6 +81,7 @@ Point** read_points(FILE* const fp, unsigned int numPoints)
 	return points;
 }
 
+
 // Iterate over the points array and find the min and max values for each field
 void get_min_max(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs)
 {
