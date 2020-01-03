@@ -77,6 +77,7 @@ Point** read_points(FILE* const fp, unsigned int numPoints)
 		}
 	}
 
+	free(fieldData);
 	return points;
 }
 
