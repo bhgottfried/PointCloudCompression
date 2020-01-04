@@ -22,10 +22,12 @@
     <ClCompile Include="compress.c" />
     <ClCompile Include="octree.c" />
     <ClCompile Include="point.c" />
+    <ClCompile Include="queue.c" />
     <ClCompile Include="single.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="octree.h" />
+    <ClInclude Include="queue.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

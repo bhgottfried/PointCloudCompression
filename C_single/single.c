@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	OctreeNode* root = create_octree(points, numPoints, fieldMins, fieldMaxs);
 
 	// Open output file pointer
-	FILE* outFilePtr = openOutFile(argv[1]);
+	FILE* outFilePtr = open_out_file(argv[1]);
 	if (!outFilePtr)
 	{
 		printf("Failed to open the output file location.\n");
