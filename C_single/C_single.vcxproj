@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="compress.c" />
     <ClCompile Include="octree.c" />
     <ClCompile Include="point.c" />
     <ClCompile Include="single.c" />

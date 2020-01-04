@@ -10,28 +10,28 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE; 
 	}
 
-	FILE* fp = fopen(argv[1], "rb");
-	if (!fp)
+	FILE* inFilePtr = fopen(argv[1], "rb");
+	if (!inFilePtr)
 	{
 		printf("Failed to open file.\n");
 		return EXIT_FAILURE;
 	}
 
 	// Read number of points from header
-	unsigned int numPoints = parse_header(fp);
+	unsigned int numPoints = parse_header(inFilePtr);
 	if (!numPoints)
 	{
 		printf("Failed to parse .pcd header.\n");
-		fclose(fp);
+		fclose(inFilePtr);
 		return EXIT_FAILURE;
 	}
 	
 	// Create array of 3D points
-	Point** points = read_points(fp, numPoints);
+	Point** points = read_points(inFilePtr, numPoints);
 	if (!points)
 	{
 		printf("Failed to parse point data.\n");
-		fclose(fp);
+		fclose(inFilePtr);
 		return EXIT_FAILURE;
 	}
 
@@ -43,7 +43,16 @@ int main(int argc, char* argv[])
 	// Create octree for the read points
 	OctreeNode* root = create_octree(points, numPoints, fieldMins, fieldMaxs);
 
-	// TODO compress
+	// Open output file pointer
+	FILE* outFilePtr = openOutFile(argv[1]);
+	if (!outFilePtr)
+	{
+		printf("Failed to open the output file location.\n");
+		return EXIT_FAILURE;
+	}
+
+	fwrite("test\n", 1, 5, outFilePtr);
+
 
 	// Clean up dynamicaly allocated memory and files
 	delete_octree(root);
@@ -52,7 +61,8 @@ int main(int argc, char* argv[])
 		free(points[ptIdx]);
 	}
 	free(points);
-	fclose(fp);
+	fclose(inFilePtr);
+	fclose(outFilePtr);
 
 	return EXIT_SUCCESS;
 }
