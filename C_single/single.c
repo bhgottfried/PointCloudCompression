@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 		printf("Failed to open the output file location.\n");
 		return EXIT_FAILURE;
 	}
-
+	
 	// Write min/max bounds to output file
 	fwrite(fieldMins, FIELD_SIZE, NUM_FIELDS, outFilePtr);
 	fwrite(fieldMaxs, FIELD_SIZE, NUM_FIELDS, outFilePtr);

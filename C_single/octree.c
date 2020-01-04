@@ -1,7 +1,7 @@
 #include "octree.h"
 
 
-void insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
+void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
 
 
 // Create a new octree node for a point object.
@@ -48,12 +48,12 @@ void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, flo
 		childIdx += 1;
 	}
 
-	insert(&(*root)->children[childIdx], newNode, lx, ux, ly, uy, lz, uz);
+	octree_insert(&(*root)->children[childIdx], newNode, lx, ux, ly, uy, lz, uz);
 }
 
 
 // Insert octree node into the tree recursively
-void insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
 {
 	if (!(*root))
 	{
@@ -80,7 +80,7 @@ OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMi
 	for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
 	{
 		OctreeNode* node = init_node(points[ptIdx]);
-		insert(&root, node, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+		octree_insert(&root, node, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 	}
 
 	return root;
