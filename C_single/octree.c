@@ -1,11 +1,11 @@
 #include "octree.h"
 
 
-void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
+static void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
 
 
 // Create a new octree node for a point object.
-OctreeNode* init_node(Point* data)
+static OctreeNode* init_node(Point* data)
 {
 	OctreeNode* node = malloc(sizeof(*node));
 	node->data = data;
@@ -18,7 +18,7 @@ OctreeNode* init_node(Point* data)
 
 
 // Determine which suboctant to insert into
-void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+static void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
 {
 	int childIdx = 0;
 	float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
@@ -53,7 +53,7 @@ void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, flo
 
 
 // Insert octree node into the tree recursively
-void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+static void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
 {
 	if (!(*root))
 	{

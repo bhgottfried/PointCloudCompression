@@ -3,7 +3,7 @@
 
 // Read until a '\n' character is reached or the buffer is full
 // Returns true for a successful read, else if the buffer will overflow, false.
-bool read_line(FILE* const fp, unsigned char* const buffer, const int bufferLen)
+static bool read_line(FILE* const fp, unsigned char* const buffer, const int bufferLen)
 {
 	for (int i = 0; i < bufferLen; i++)
 	{
