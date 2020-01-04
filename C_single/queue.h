@@ -1,6 +1,8 @@
 #ifndef __QUEUE_H_
 #define __QUEUE_H_
 
+
+#include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -20,10 +22,9 @@ typedef struct _Queue
 
 Queue* init_queue();
 void delete_queue(Queue* Q);
-
 void* peek(Queue* Q);
 bool is_empty(Queue* Q);
-int get_size(Queue* Q);
+int get_count(Queue* Q);
 void enqueue(Queue* Q, void* data);
 void* dequeue(Queue* Q);
 
