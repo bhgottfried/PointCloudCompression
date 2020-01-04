@@ -2,7 +2,7 @@
 
 
 // Create an output file poiner based on the name of the input file
-FILE* openOutFile(const char* const inFile)
+FILE* open_out_file(const char* const inFile)
 {
 	int numChars = 0;
 	int lastSlashIdx = 0;

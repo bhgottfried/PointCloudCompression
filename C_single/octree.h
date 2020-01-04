@@ -32,7 +32,7 @@ void get_min_max(Point** points, unsigned int numPoints, float* fieldMins, float
 OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs);
 void delete_octree(OctreeNode* root);
 // Compression functions
-FILE* openOutFile(const char* const inFile);
+FILE* open_out_file(const char* const inFile);
 void compress(const OctreeNode* const root, FILE* const fp);
 
 
