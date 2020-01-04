@@ -33,6 +33,7 @@ OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMi
 void delete_octree(OctreeNode* root);
 // Compression functions
 FILE* openOutFile(const char* const inFile);
+void compress(const OctreeNode* const root, FILE* const fp);
 
 
 #endif

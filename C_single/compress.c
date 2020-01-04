@@ -33,8 +33,8 @@ FILE* openOutFile(const char* const inFile)
 }
 
 
-
-
-
-
-
+// Breadth first traversal of the tree to write bytes for populated octants
+void compress(const OctreeNode* const root, FILE* const fp)
+{
+	// TODO
+}

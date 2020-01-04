@@ -51,8 +51,12 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	fwrite("test\n", 1, 5, outFilePtr);
+	// Write min/max bounds to output file
+	fwrite(fieldMins, FIELD_SIZE, NUM_FIELDS, outFilePtr);
+	fwrite(fieldMaxs, FIELD_SIZE, NUM_FIELDS, outFilePtr);
 
+	// Breadth first traversal of the tree to write bytes for populated octants
+	compress(root, outFilePtr);	
 
 	// Clean up dynamicaly allocated memory and files
 	delete_octree(root);
