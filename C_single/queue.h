@@ -2,7 +2,6 @@
 #define __QUEUE_H_
 
 
-#include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
