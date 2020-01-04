@@ -24,8 +24,8 @@ void delete_queue(Queue* Q);
 void* peek(Queue* Q);
 bool is_empty(Queue* Q);
 int get_size(Queue* Q);
-void queue_insert(Queue* Q, void* data);
-void* queue_remove(Queue* Q);
+void enqueue(Queue* Q, void* data);
+void* dequeue(Queue* Q);
 
 
 #endif
