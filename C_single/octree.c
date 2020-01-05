@@ -1,9 +1,6 @@
 #include "octree.h"
 
 
-static void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz);
-
-
 // Create a new octree node for a point object.
 static OctreeNode* init_node(Point* data)
 {
@@ -17,57 +14,56 @@ static OctreeNode* init_node(Point* data)
 }
 
 
-// Determine which suboctant to insert into
-static void calc_bounds(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
-{
-	int childIdx = 0;
-	float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
-
-	// Compare the node data to the mid points
-	if (newNode->data->coords[0] > midx)
-	{
-		lx = midx;
-		childIdx += 4;
-	}
-	else
-	{
-		ux = midx;
-	}
-	if (newNode->data->coords[1] > midy)
-	{
-		ly = midy;
-		childIdx += 2;
-	}
-	else
-	{
-		uy = midy;
-	}
-	if (newNode->data->coords[2] > midz)
-	{
-		lz = midz;
-		childIdx += 1;
-	}
-
-	octree_insert(&(*root)->children[childIdx], newNode, lx, ux, ly, uy, lz, uz);
-}
-
-
 // Insert octree node into the tree recursively
-static void octree_insert(OctreeNode** root, OctreeNode* newNode, float lx, float ux, float ly, float uy, float lz, float uz)
+static void octree_insert(OctreeNode** root, Point* newPt, int depth, float lx, float ux, float ly, float uy, float lz, float uz)
 {
-	if (!(*root))
+	if (depth == TARGET_DEPTH)
 	{
-		*root = newNode;
-	}
-	else
-	{
-		if ((*root)->data)		// Former leaf node (root) now becomes internal node and leaf data gets reinserted
+		if (*root == NULL)
 		{
-			OctreeNode* prevNode = init_node((*root)->data);
-			(*root)->data = NULL;
-			calc_bounds(root, prevNode, lx, ux, ly, uy, lz, uz);
+			*root = init_node(newPt);		// First point in this leaf suboctant
 		}
-		calc_bounds(root, newNode, lx, ux, ly, uy, lz, uz);
+		else
+		{
+			newPt->next = (*root)->data;	// Add point into linked list of points in this leaf suboctant
+			(*root)->data = newPt;
+		}
+	}
+	else	// Recursively find suboctant
+	{
+		int childIdx = 0;
+		float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
+
+		// Compare the node data to the mid points
+		if (newPt->coords[0] > midx)
+		{
+			lx = midx;
+			childIdx += 4;
+		}
+		else
+		{
+			ux = midx;
+		}
+		if (newPt->coords[1] > midy)
+		{
+			ly = midy;
+			childIdx += 2;
+		}
+		else
+		{
+			uy = midy;
+		}
+		if (newPt->coords[2] > midz)
+		{
+			lz = midz;
+			childIdx += 1;
+		}
+
+		if (!(*root))
+		{
+			*root = init_node(NULL);	// First time visiting this suboctant
+		}
+		octree_insert(&(*root)->children[childIdx], newPt, depth + 1, lx, ux, ly, uy, lz, uz);
 	}
 }
 
@@ -79,8 +75,7 @@ OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMi
 
 	for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
 	{
-		OctreeNode* node = init_node(points[ptIdx]);
-		octree_insert(&root, node, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+		octree_insert(&root, points[ptIdx], 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 	}
 
 	return root;

@@ -8,12 +8,14 @@
 #include <stdbool.h>
 
 
+#define TARGET_DEPTH 3	// Can be added into the input file header, but will violate the .pcd standard
 #define NUM_FIELDS 3
 #define FIELD_SIZE (sizeof(float))
 
 
 typedef struct _Point
 {
+	struct _Point* next;
 	float coords[NUM_FIELDS];
 } Point;
 
