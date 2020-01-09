@@ -83,7 +83,7 @@ int get_count(Queue* Q)
 }
 
 
-void enqueue(Queue* Q, void* data)
+void enqueue(Queue* Q, const void* const data)
 {
 	if (Q->itemCount == Q->capacity)
 	{
