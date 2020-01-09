@@ -37,6 +37,7 @@ void delete_octree(OctreeNode* root);
 // Compression functions
 FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
 void compress(const OctreeNode* const root, FILE* const fp);
+void decompress(FILE* const inFilePtr, FILE* const outFilePtr);
 
 
 #endif

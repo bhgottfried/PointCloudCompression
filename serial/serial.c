@@ -77,6 +77,9 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
+	// Decompress to test
+	decompress(inCompFilePtr, outDcmpFilePtr);
+
 	// Close decompressed files
 	fclose(inCompFilePtr);
 	fclose(outFilePtr);

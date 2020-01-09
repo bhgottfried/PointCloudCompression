@@ -72,3 +72,9 @@ void compress(const OctreeNode* const root, FILE* const fp)
 	
 	delete_queue(Q);
 }
+
+
+void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
+{
+	
+}
