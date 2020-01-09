@@ -16,7 +16,7 @@ FILE* open_out_file(const char* const inFile)
 		}
 	}
 
-	char outFileName[68] = "..\\output\\";
+	char outFileName[68] = "../output/";
 	int lenName = numChars - lastSlashIdx - 5 + 10;	// -5 to ignore the ".pcd", +10 to ignore the "..\\output\\"
 	int charIdx = 10;
 	for (; charIdx < lenName; charIdx++)
