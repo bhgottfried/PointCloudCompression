@@ -20,3 +20,4 @@
 *.sln
 *.json
 *.sqlite
+*.pcd
