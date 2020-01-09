@@ -1,5 +1,5 @@
-all: single.o compress.o octree.o queue.o point.o
-	gcc -o serial single.o compress.o octree.o queue.o point.o
+all: serial.o compress.o octree.o queue.o point.o
+	gcc -o serial serial.o compress.o octree.o queue.o point.o
 
 %.o: %.c
 	gcc -c $<
