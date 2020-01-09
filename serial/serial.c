@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	OctreeNode* root = create_octree(points, numPoints, fieldMins, fieldMaxs);
 
 	// Open output file pointer
-	FILE* outFilePtr = open_out_file(argv[1]);
+	FILE* outFilePtr = open_out_file(argv[1], "wb", ".pcdcmp");
 	if (!outFilePtr)
 	{
 		printf("Failed to open the output file location.\n");
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	// Breadth first traversal of the tree to write bytes for populated octants
 	compress(root, outFilePtr);	
 
-	// Clean up dynamicaly allocated memory and files
+	// Clean up dynamicaly allocated memory and files from compression
 	delete_octree(root);
 	for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
 	{
@@ -66,6 +66,19 @@ int main(int argc, char* argv[])
 	}
 	free(points);
 	fclose(inFilePtr);
+	fclose(outFilePtr);
+
+	// Decompress newly compressed files for testing
+	FILE* inCompFilePtr = open_out_file(argv[1], "rb", ".pcdcmp");
+	FILE* outDcmpFilePtr = open_out_file(argv[1], "wb", ".pcdcmp.pcd");
+	if (!inCompFilePtr || !outDcmpFilePtr)
+	{
+		printf("Failed to open files for decompression.\n");
+		return EXIT_FAILURE;
+	}
+
+	// Close decompressed files
+	fclose(inCompFilePtr);
 	fclose(outFilePtr);
 
 	return EXIT_SUCCESS;

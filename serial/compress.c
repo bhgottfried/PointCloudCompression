@@ -3,7 +3,7 @@
 
 
 // Create an output file poiner based on the name of the input file
-FILE* open_out_file(const char* const inFile)
+FILE* open_out_file(const char* const inFile, char* mode, char* fileExt)
 {
 	int numChars = 0;
 	int lastSlashIdx = 0;
@@ -16,7 +16,7 @@ FILE* open_out_file(const char* const inFile)
 		}
 	}
 
-	char outFileName[68] = "../output/";
+	char outFileName[80] = "../output/";
 	int lenName = numChars - lastSlashIdx - 5 + 10;	// -5 to ignore the ".pcd", +10 to ignore the "..\\output\\"
 	int charIdx = 10;
 	for (; charIdx < lenName; charIdx++)
@@ -24,13 +24,20 @@ FILE* open_out_file(const char* const inFile)
 		outFileName[charIdx] = inFile[++lastSlashIdx];
 	}
 
-	char fileExt[8] = ".pcdcmp\0";
-	for (int extIdx = 0; extIdx < 8; extIdx++)
+	int extLen = strlen(fileExt);
+	for (int extIdx = 0; extIdx <= extLen; extIdx++)
 	{
-		outFileName[charIdx++] = fileExt[extIdx];
+		if (extIdx == extLen)	// Extra space to write null terminator. Inefficient but will be short so it doesn't really matter
+		{
+			outFileName[charIdx++] = '\0';
+		}
+		else
+		{
+			outFileName[charIdx++] = fileExt[extIdx];
+		}
 	}
-
-	return fopen(outFileName, "wb");
+	
+	return fopen(outFileName, mode);
 }
 
 

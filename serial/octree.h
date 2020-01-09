@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 
 #define TARGET_DEPTH 3	// Can be added into the input file header, but will violate the .pcd standard
@@ -34,7 +35,7 @@ void get_min_max(Point** points, unsigned int numPoints, float* fieldMins, float
 OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs);
 void delete_octree(OctreeNode* root);
 // Compression functions
-FILE* open_out_file(const char* const inFile);
+FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
 void compress(const OctreeNode* const root, FILE* const fp);
 
 
