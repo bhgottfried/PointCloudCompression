@@ -10,7 +10,7 @@ FILE* open_out_file(const char* const inFile)
 
 	for (; inFile[numChars] != '\0' && numChars < 50; numChars++)
 	{
-		if (inFile[numChars] == '\\')
+		if (inFile[numChars] == '\\' || inFile[numChars] == '/')
 		{
 			lastSlashIdx = numChars;
 		}
