@@ -2,7 +2,7 @@
 
 
 // Create a new octree node for a point object.
-static OctreeNode* init_node(Point* data)
+OctreeNode* init_node(Point* data)
 {
 	OctreeNode* node = malloc(sizeof(*node));
 	node->data = data;
@@ -79,6 +79,32 @@ OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMi
 	}
 
 	return root;
+}
+
+
+// Depth first traversal of octree, writing centroids of points when at leaf nodes
+void write_octree_points(FILE* const fp, const OctreeNode* const root, int depth, float lx, float ux, float ly, float uy, float lz, float uz)
+{
+	if (root)
+	{
+		float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
+		if (depth < TARGET_DEPTH)
+		{
+			for (int childIdx = 0; childIdx < 8; childIdx++)
+			{
+				if (root->children[childIdx])
+				{
+					// write_octree_points(fp, root->children[childIdx], depth + 1, childIdx & 4 ? midx : lx)
+				}
+			}
+		}
+		else
+		{
+			// root is leaf node so write centroids to file
+			// fwrite({ midx, midy, midz }, sizeof(midx), 3, fp);
+		}
+		
+	}
 }
 
 

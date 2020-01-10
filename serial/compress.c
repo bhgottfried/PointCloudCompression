@@ -74,7 +74,48 @@ void compress(const OctreeNode* const root, FILE* const fp)
 }
 
 
+// Read in the compressed data, build an octree, and write the point set to a .pcd file
 void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 {
+	float fieldMins[NUM_FIELDS];
+	float fieldMaxs[NUM_FIELDS];
+	fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr);
+	fread(fieldMaxs, FIELD_SIZE, NUM_FIELDS, inFilePtr);
+
+	OctreeNode* root = init_node(NULL);
+	Queue* Q = init_queue();
+	enqueue(Q, root);
 	
+	// Variables to handle counting number of points in compressed file
+	unsigned char dataByte = 0;
+	unsigned int numPoints = 0;
+	unsigned int numNodesPrev = 0;
+	unsigned int numNodesCurr = 0;
+
+	while ((dataByte = fgetc(inFilePtr)) != EOF)
+	{
+		// Are we in a deeper level of the octree?
+		if (!numNodesPrev--)
+		{
+			numNodesPrev = numNodesCurr;
+			numNodesCurr = 0;
+		}
+
+		OctreeNode* curr = (OctreeNode*) dequeue(Q);
+		for (int childIdx = 0; childIdx < 8; childIdx++)
+		{
+			// If the bit is set in the compressed data byte, then that suboctant has a point in it
+			if (dataByte & (1 << (7 - childIdx)))
+			{
+				curr->children[childIdx] = init_node(NULL);
+				enqueue(Q, curr->children[childIdx]);
+				numNodesCurr++;
+			}
+		}
+	}
+
+	delete_queue(Q);
+	write_header(outFilePtr, numPoints);
+	write_octree_points(outFilePtr, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+	delete_octree(root);
 }
