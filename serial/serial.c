@@ -48,6 +48,13 @@ int main(int argc, char* argv[])
 	if (!outFilePtr)
 	{
 		printf("Failed to open the output file location.\n");
+		delete_octree(root);
+		for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
+		{
+			free(points[ptIdx]);
+		}
+		free(points);
+		fclose(inFilePtr);
 		return EXIT_FAILURE;
 	}
 	
@@ -74,6 +81,14 @@ int main(int argc, char* argv[])
 	if (!inCompFilePtr || !outDcmpFilePtr)
 	{
 		printf("Failed to open files for decompression.\n");
+		if (inCompFilePtr)
+		{
+			fclose(inCompFilePtr);
+		}
+		if (outDcmpFilePtr)
+		{
+			fclose(outDcmpFilePtr);
+		}
 		return EXIT_FAILURE;
 	}
 
