@@ -94,16 +94,28 @@ void write_octree_points(FILE* const fp, const OctreeNode* const root, int depth
 			{
 				if (root->children[childIdx])
 				{
-					// write_octree_points(fp, root->children[childIdx], depth + 1, childIdx & 4 ? midx : lx)
+					float nlx = lx, nux = ux, nly = ly, nuy = uy, nlz = lz, nuz = uz;	// Get new bounds for suboctant
+					if (childIdx & 4)
+						nlx = midx;
+					else
+						nux = midx;
+					if (childIdx & 2)
+						nly = midy;
+					else
+						nuy = midy;
+					if (childIdx & 1)
+						nlz = midz;
+					else
+						nuz = midz;
+					write_octree_points(fp, root->children[childIdx], depth + 1, nlx, nux, nly, nuy, nlz, nuz);
 				}
 			}
 		}
-		else
+		else	// root is leaf node so write centroids to file
 		{
-			// root is leaf node so write centroids to file
-			// fwrite({ midx, midy, midz }, sizeof(midx), 3, fp);
+			float centroid[] = { midx, midy, midz }; 
+			fwrite(centroid, sizeof(*centroid), 3, fp);
 		}
-		
 	}
 }
 

@@ -36,6 +36,9 @@ FILE* open_out_file(const char* const inFile, char* mode, char* fileExt)
 			outFileName[charIdx++] = fileExt[extIdx];
 		}
 	}
+
+	printf("%s\n", outFileName);
+	printf("%s\n", mode);
 	
 	return fopen(outFileName, mode);
 }

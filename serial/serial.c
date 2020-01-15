@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Decompress to test
-	decompress(inCompFilePtr, outDcmpFilePtr);
+	// decompress(inCompFilePtr, outDcmpFilePtr);
 
 	// Close decompressed files
 	fclose(inCompFilePtr);
