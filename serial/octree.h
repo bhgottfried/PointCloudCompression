@@ -2,7 +2,6 @@
 #define __OCTREE_H_
 
 
-#define _CRT_SECURE_NO_DEPRECATE	// So fopen doesn't throw deprecation warning
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

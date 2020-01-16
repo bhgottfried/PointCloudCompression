@@ -36,9 +36,6 @@ FILE* open_out_file(const char* const inFile, char* mode, char* fileExt)
 			outFileName[charIdx++] = fileExt[extIdx];
 		}
 	}
-
-	printf("%s\n", outFileName);
-	printf("%s\n", mode);
 	
 	return fopen(outFileName, mode);
 }
@@ -90,15 +87,14 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 	enqueue(Q, root);
 	
 	// Variables to handle counting number of points in compressed file
-	unsigned char dataByte = 0;
-	unsigned int numPoints = 0;
-	unsigned int numNodesPrev = 0;
-	unsigned int numNodesCurr = 0;
+	char dataByte = 0;
+	int numNodesPrev = 1;	// Set to 1 because of spaghetti, but it fixes off by one error...
+	int numNodesCurr = 1;	// Set to 1 because of spaghetti, but it fixes off by one error...
 
 	while ((dataByte = fgetc(inFilePtr)) != EOF)
 	{
 		// Are we in a deeper level of the octree?
-		if (!numNodesPrev--)
+		if (!--numNodesPrev)
 		{
 			numNodesPrev = numNodesCurr;
 			numNodesCurr = 0;
@@ -116,9 +112,9 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 			}
 		}
 	}
-
+	
 	delete_queue(Q);
-	write_header(outFilePtr, numPoints);
+	write_header(outFilePtr, numNodesCurr);
 	write_octree_points(outFilePtr, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 	delete_octree(root);
 }
