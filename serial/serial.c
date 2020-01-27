@@ -20,51 +20,57 @@ int main(int argc, char* argv[])
 	// Create octree for the read points
 	OctreeNode* root = create_octree(ptSet);
 
-	// Open output file pointer
-	FILE* outFilePtr = open_out_file(argv[1], "wb", ".pcdcmp");
-	if (!outFilePtr)
+	//, if compressing a single cloud
+	if (!strcmp(argv[1], "-c"))
 	{
-		printf("Failed to open the output file location.\n");
-		delete_point_set(ptSet);
-		delete_octree(root);
-		return EXIT_FAILURE;
+		// Open output file pointer
+		FILE* outFilePtr = open_out_file(argv[1], "wb", ".pcdcmp");
+		if (!outFilePtr)
+		{
+			printf("Failed to open the output file location.\n");
+			delete_point_set(ptSet);
+			delete_octree(root);
+			return EXIT_FAILURE;
+		}
+		
+		// Write min/max bounds to output file
+		fwrite(ptSet->mins, FIELD_SIZE, NUM_FIELDS, outFilePtr);
+		fwrite(ptSet->maxs, FIELD_SIZE, NUM_FIELDS, outFilePtr);
+
+		// Breadth first traversal of the tree to write bytes for populated octants
+		compress(root, outFilePtr);	
+		fclose(outFilePtr);
+
+		// Decompress newly compressed files for testing
+		FILE* inCompFilePtr = open_out_file(argv[1], "rb", ".pcdcmp");
+		FILE* outDcmpFilePtr = open_out_file(argv[1], "wb", ".pcdcmp.pcd");
+		if (!inCompFilePtr || !outDcmpFilePtr)
+		{
+			printf("Failed to open files for decompression.\n");
+			if (inCompFilePtr)
+			{
+				fclose(inCompFilePtr);
+			}
+			if (outDcmpFilePtr)
+			{
+				fclose(outDcmpFilePtr);
+			}
+			return EXIT_FAILURE;
+		}
+
+		// Decompress to test
+		decompress(inCompFilePtr, outDcmpFilePtr);
+
+		// Close decompressed files
+		fclose(inCompFilePtr);
+		fclose(outDcmpFilePtr);
 	}
-	
-	// Write min/max bounds to output file
-	fwrite(ptSet->mins, FIELD_SIZE, NUM_FIELDS, outFilePtr);
-	fwrite(ptSet->maxs, FIELD_SIZE, NUM_FIELDS, outFilePtr);
 
-	// Breadth first traversal of the tree to write bytes for populated octants
-	compress(root, outFilePtr);	
+	// TODO Parse more octrees and create diff trees
 
-	// Clean up dynamicaly allocated memory and files from compression
+	// Clean up dynamicaly allocated memory
 	delete_point_set(ptSet);
 	delete_octree(root);
-	fclose(outFilePtr);
-
-	// Decompress newly compressed files for testing
-	FILE* inCompFilePtr = open_out_file(argv[1], "rb", ".pcdcmp");
-	FILE* outDcmpFilePtr = open_out_file(argv[1], "wb", ".pcdcmp.pcd");
-	if (!inCompFilePtr || !outDcmpFilePtr)
-	{
-		printf("Failed to open files for decompression.\n");
-		if (inCompFilePtr)
-		{
-			fclose(inCompFilePtr);
-		}
-		if (outDcmpFilePtr)
-		{
-			fclose(outDcmpFilePtr);
-		}
-		return EXIT_FAILURE;
-	}
-
-	// Decompress to test
-	decompress(inCompFilePtr, outDcmpFilePtr);
-
-	// Close decompressed files
-	fclose(inCompFilePtr);
-	fclose(outDcmpFilePtr);
 
 	return EXIT_SUCCESS;
 }

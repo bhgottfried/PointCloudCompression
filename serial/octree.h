@@ -33,6 +33,13 @@ typedef struct _OctreeNode
 	struct _OctreeNode* children[8];
 } OctreeNode;
 
+typedef struct _DiffOctree
+{
+	OctreeNode* A;
+	OctreeNode* B;
+	unsigned char* serialization;
+} DiffOctree;
+
 
 // Point functions
 PointSet* get_point_set(const char* const fileName);
