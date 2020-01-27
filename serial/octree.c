@@ -69,13 +69,13 @@ static void octree_insert(OctreeNode** root, Point* newPt, int depth, float lx, 
 
 
 // Generate full octree from point data
-OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs)
+OctreeNode* create_octree(const PointSet* const ptSet)
 {
 	OctreeNode* root = NULL;
 
-	for (unsigned int ptIdx = 0; ptIdx < numPoints; ptIdx++)
+	for (unsigned int ptIdx = 0; ptIdx < ptSet->numPoints; ptIdx++)
 	{
-		octree_insert(&root, points[ptIdx], 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+		octree_insert(&root, ptSet->points[ptIdx], 0, ptSet->mins[0], ptSet->maxs[0], ptSet->mins[1], ptSet->maxs[1], ptSet->mins[2], ptSet->maxs[2]);
 	}
 
 	return root;

@@ -19,6 +19,14 @@ typedef struct _Point
 	float coords[NUM_FIELDS];
 } Point;
 
+typedef struct _PointSet
+{
+	unsigned int numPoints;
+	float mins[NUM_FIELDS];
+	float maxs[NUM_FIELDS];
+	Point** points;
+} PointSet;
+
 typedef struct _OctreeNode
 {
 	Point* data;
@@ -27,13 +35,12 @@ typedef struct _OctreeNode
 
 
 // Point functions
-unsigned int parse_header(FILE* const fp);
+PointSet* get_point_set(const char* const fileName);
+void delete_point_set(PointSet* ptSet);
 void write_header(FILE* const fp, unsigned int numPoints);
-Point** read_points(FILE* const fp, unsigned int numPoints);
-void get_min_max(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs);
 // Octree functions
 OctreeNode* init_node(Point* data);
-OctreeNode* create_octree(Point** points, unsigned int numPoints, float* fieldMins, float* fieldMaxs);
+OctreeNode* create_octree(const PointSet* const ptSet);
 void write_octree_points(FILE* const fp, const OctreeNode* const root, int depth, float lx, float ux, float ly, float uy, float lz, float uz);
 void delete_octree(OctreeNode* root);
 // Compression functions
