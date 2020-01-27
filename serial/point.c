@@ -54,49 +54,6 @@ void delete_point_set(PointSet* ptSet)
 }
 
 
-// Write a pcd header with the number of points of the compressed octree
-void write_header(FILE* const fp, unsigned int numPoints)
-{
-	const char version[] = "VERSION .7\n";
-	const char fields[] = "FIELDS x y z\n";
-	const char size[] = "SIZE 4 4 4\n";
-	const char type[] = "TYPE f f f\n";
-	const char count[] = "COUNT 1 1 1\n";
-	char width[24] = "WIDTH ";		// Still need to convert numPoints into ASCII
-	const char height[] = "HEIGHT 1\n";
-	const char viewpoint[] = "VIEWPOINT 0 0 0 1 0 0 0\n";
-	char points[24] = "POINTS ";	// Still need to convert numPoints into ASCII
-	const char data[] = "DATA binary\n";
-
-	unsigned int numDigits = 0;
-	unsigned int numPointsCpy = numPoints;
-	while (numPointsCpy)
-	{
-		numPointsCpy /= 10;
-		numDigits++;
-	}
-
-	for (int digIdx = numDigits - 1; digIdx >= 0; digIdx--)
-	{
-		char currDigit = numPoints % 10 + '0';
-		numPoints /= 10;
-		width[digIdx + 6] = currDigit;
-		points[digIdx + 7] = currDigit;
-	}
-
-	width[numDigits + 6] = '\n';
-	width[numDigits + 7] = '\0';
-	points[numDigits + 7] = '\n';
-	points[numDigits + 8] = '\0';
-
-	const char* adrs[] = { version, fields, size, type, count, width, height, viewpoint, points, data };
-	for (int adrIdx = 0; adrIdx < 10; adrIdx++)
-	{
-		fwrite(adrs[adrIdx], sizeof(**adrs), strlen(adrs[adrIdx]), fp);
-	}
-}
-
-
 // Read until a '\n' character is reached or the buffer is full
 // Returns true for a successful read, else if the buffer will overflow, false.
 static bool read_line(FILE* const fp, unsigned char* const buffer, const int bufferLen)

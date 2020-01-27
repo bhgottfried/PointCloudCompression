@@ -82,44 +82,6 @@ OctreeNode* create_octree(const PointSet* const ptSet)
 }
 
 
-// Depth first traversal of octree, writing centroids of points when at leaf nodes
-void write_octree_points(FILE* const fp, const OctreeNode* const root, int depth, float lx, float ux, float ly, float uy, float lz, float uz)
-{
-	if (root)
-	{
-		float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
-		if (depth < TARGET_DEPTH)
-		{
-			for (int childIdx = 0; childIdx < 8; childIdx++)
-			{
-				if (root->children[childIdx])
-				{
-					float nlx = lx, nux = ux, nly = ly, nuy = uy, nlz = lz, nuz = uz;	// Get new bounds for suboctant
-					if (childIdx & 4)
-						nlx = midx;
-					else
-						nux = midx;
-					if (childIdx & 2)
-						nly = midy;
-					else
-						nuy = midy;
-					if (childIdx & 1)
-						nlz = midz;
-					else
-						nuz = midz;
-					write_octree_points(fp, root->children[childIdx], depth + 1, nlx, nux, nly, nuy, nlz, nuz);
-				}
-			}
-		}
-		else	// root is leaf node so write centroids to file
-		{
-			float centroid[] = { midx, midy, midz }; 
-			fwrite(centroid, sizeof(*centroid), 3, fp);
-		}
-	}
-}
-
-
 // Free any dynamically allocated memory in the octree
 void delete_octree(OctreeNode* root)
 {
