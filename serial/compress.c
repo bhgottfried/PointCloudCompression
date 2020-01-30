@@ -43,12 +43,13 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 	fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr);
 	fread(fieldMaxs, FIELD_SIZE, NUM_FIELDS, inFilePtr);
 
-	OctreeNode* root = init_node(NULL);
+	OctreeNode* root = init_node(false);
 	Queue* Q = init_queue();
 	enqueue(Q, root);
 	
 	// Variables to handle counting number of points in compressed file
 	char dataByte = 0;
+	int currDepth = 0;
 	int numNodesPrev = 1;	// Set to 1 because of spaghetti, but it fixes off by one error...
 	int numNodesCurr = 1;	// Set to 1 because of spaghetti, but it fixes off by one error...
 
@@ -59,6 +60,7 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 		{
 			numNodesPrev = numNodesCurr;
 			numNodesCurr = 0;
+			currDepth++;
 		}
 
 		OctreeNode* curr = (OctreeNode*) dequeue(Q);
@@ -67,7 +69,7 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 			// If the bit is set in the compressed data byte, then that suboctant has a point in it
 			if (dataByte & (1 << (7 - childIdx)))
 			{
-				curr->children[childIdx] = init_node(NULL);
+				curr->children[childIdx] = init_node(currDepth == TARGET_DEPTH);
 				enqueue(Q, curr->children[childIdx]);
 				numNodesCurr++;
 			}

@@ -2,10 +2,11 @@
 
 
 // Create a new octree node for a point object.
-OctreeNode* init_node(Point* data)
+OctreeNode* init_node(bool isLeaf)
 {
 	OctreeNode* node = malloc(sizeof(*node));
-	node->data = data;
+	node->isLeaf = isLeaf;
+	node->data = 0;
 	for (int i = 0; i < 8; i++)
 	{
 		node->children[i] = NULL;
@@ -17,19 +18,7 @@ OctreeNode* init_node(Point* data)
 // Insert octree node into the tree recursively
 static void octree_insert(OctreeNode** root, Point* newPt, int depth, float lx, float ux, float ly, float uy, float lz, float uz)
 {
-	if (depth == TARGET_DEPTH)
-	{
-		if (*root == NULL)
-		{
-			*root = init_node(newPt);		// First point in this leaf suboctant
-		}
-		else
-		{
-			newPt->next = (*root)->data;	// Add point into linked list of points in this leaf suboctant
-			(*root)->data = newPt;
-		}
-	}
-	else	// Recursively find suboctant
+	if (depth < TARGET_DEPTH)
 	{
 		int childIdx = 0;
 		float midx = lx + (ux - lx) / 2, midy = ly + (uy - ly) / 2, midz = lz + (uz - lz) / 2;	// Midpoints of bounds
@@ -59,12 +48,20 @@ static void octree_insert(OctreeNode** root, Point* newPt, int depth, float lx, 
 			childIdx += 1;
 		}
 
-		if (!(*root))
+		// First time visiting this suboctant
+		if (*root == NULL)
 		{
-			*root = init_node(NULL);	// First time visiting this suboctant
+			*root = init_node(false);
+			(*root)->data |= 1 << childIdx;
 		}
+
 		octree_insert(&(*root)->children[childIdx], newPt, depth + 1, lx, ux, ly, uy, lz, uz);
 	}
+	
+	else
+	{
+		*root = init_node(true);
+	}	
 }
 
 

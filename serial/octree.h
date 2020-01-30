@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 
 #define TARGET_DEPTH 3	// Can be added into the input file header, but will violate the .pcd standard
@@ -29,7 +30,8 @@ typedef struct _PointSet
 
 typedef struct _OctreeNode
 {
-	Point* data;
+	bool isLeaf;
+	unsigned char data;
 	struct _OctreeNode* children[8];
 } OctreeNode;
 
@@ -45,7 +47,7 @@ typedef struct _DiffOctree
 PointSet* get_point_set(const char* const fileName);
 void delete_point_set(PointSet* ptSet);
 // Octree functions
-OctreeNode* init_node(Point* data);
+OctreeNode* init_node(bool isLeaf);
 OctreeNode* create_octree(const PointSet* const ptSet);
 void delete_octree(OctreeNode* root);
 // Compression functions
