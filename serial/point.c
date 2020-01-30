@@ -136,7 +136,7 @@ static Point** read_points(FILE* const fp, unsigned int numPoints)
 }
 
 
-// Iterate over the points array and find the min and max values for each field
+// Iterate over the points array and find the min and max values for each field, adjusted by 5% to give a buffer
 static void get_min_max(PointSet* ptSet)
 {
 	for (int fieldIdx = 0; fieldIdx < NUM_FIELDS; fieldIdx++)
@@ -158,5 +158,11 @@ static void get_min_max(PointSet* ptSet)
 				ptSet->mins[fieldIdx] = ptSet->points[ptIdx]->coords[fieldIdx];
 			}
 		}
+	}
+
+	for (int fieldIdx = 0; fieldIdx < NUM_FIELDS; fieldIdx++)
+	{
+		ptSet->mins[fieldIdx] *= 0.05;
+		ptSet->maxs[fieldIdx] *= 0.05;
 	}
 }
