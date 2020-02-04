@@ -88,5 +88,13 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 // Remove dynamically allocated memory for DiffDataLL by walking linked list
 void delete_diff_data(DiffDataLL* list)
 {
-
+	DiffDataLL* curr = list;
+	DiffDataLL* temp = NULL;
+	
+	while (curr)
+	{
+		temp = curr->next;
+		free(curr);
+		curr = temp;
+	}
 }
