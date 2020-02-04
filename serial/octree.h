@@ -49,11 +49,11 @@ void delete_point_set(PointSet* ptSet);
 // Octree functions
 OctreeNode* init_node(bool isLeaf);
 OctreeNode* create_octree(const PointSet* const ptSet);
-DiffDataLL* calc_diff(OctreeNode* curr, OctreeNode* prev);
 void delete_octree(OctreeNode* root);
 // Compression functions
 void compress(const OctreeNode* const root, FILE* const fp);
 void decompress(FILE* const inFilePtr, FILE* const outFilePtr);
+DiffDataLL* calc_diff(const OctreeNode* const curr, const OctreeNode* const prev);
 void delete_diff_data(DiffDataLL* list);
 // Public FileIO functions
 void write_header(FILE* const fp, unsigned int numPoints);

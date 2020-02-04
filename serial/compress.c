@@ -36,7 +36,6 @@ void compress(const OctreeNode* const root, FILE* const fp)
 
 
 // TODO decompress is currently not working, but should be an easy fix... later
-
 // Read in the compressed data, build an octree, and write the point set to a .pcd file
 void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 {
@@ -85,12 +84,20 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 }
 
 
+// XOR current tree with previous tree and return linked list of the difference
+DiffDataLL* calc_diff(const OctreeNode* const curr, const OctreeNode* const prev)
+{
+	// TODO
+	return NULL;
+}
+
+
 // Remove dynamically allocated memory for DiffDataLL by walking linked list
 void delete_diff_data(DiffDataLL* list)
 {
 	DiffDataLL* curr = list;
 	DiffDataLL* temp = NULL;
-	
+
 	while (curr)
 	{
 		temp = curr->next;
