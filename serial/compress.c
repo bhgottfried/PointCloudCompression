@@ -83,3 +83,10 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 	write_octree_points(outFilePtr, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 	delete_octree(root);
 }
+
+
+// Remove dynamically allocated memory for DiffDataLL by walking linked list
+void delete_diff_data(DiffDataLL* list)
+{
+
+}

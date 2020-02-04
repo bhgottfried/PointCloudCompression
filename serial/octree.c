@@ -79,6 +79,13 @@ OctreeNode* create_octree(const PointSet* const ptSet)
 }
 
 
+// XOR current tree with previous tree and return linked list of the difference
+DiffDataLL* calc_diff(OctreeNode* curr, OctreeNode* prev)
+{
+	return NULL;
+}
+
+
 // Free any dynamically allocated memory in the octree
 void delete_octree(OctreeNode* root)
 {
