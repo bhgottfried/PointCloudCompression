@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	}
 	
 	// Parse .pcd data and create set of points for inital cloud
-	PointSet* P0 = get_point_set(argv[isStream ? 3 : 2]);
+	PointSet* P0 = get_point_set(argv[isStream ? PATH_0_IDX : 2]);
 	if (!P0)
 	{
 		return EXIT_FAILURE;
@@ -90,7 +90,47 @@ int main(int argc, char* argv[])
 	// Otherwise, compress the point cloud stream cloud by cloud
 	else
 	{
-		// TODO
+		PointSet* prevPtSet  = P0;
+		PointSet* currPtSet  = NULL;
+		OctreeNode* prevTree = T0;
+		OctreeNode* currTree = NULL;
+
+		for (unsigned int cloudIdx = 1; cloudIdx < numClouds; cloudIdx++)
+		{
+			// Parse next point data and create octree
+			currPtSet = get_point_set(argv[PATH_0_IDX + cloudIdx]);
+			if (!currPtSet)
+			{
+				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", cloudIdx);
+				delete_point_set(prevPtSet);
+				delete_octree(prevTree);
+				delete_point_set(P0);
+				delete_octree(T0);
+				return EXIT_FAILURE;
+			}
+			currTree = create_octree(currPtSet);
+
+			// Calc bitwise difference between last tree and current tree
+			DiffDataLL* diff = calc_diff(currTree, prevTree);
+			
+
+			// TODO do something with the diff data.
+
+
+			// Free dynamically allocated memory for trees, except the initial tree
+			if (cloudIdx > 1)
+			{
+				delete_point_set(prevPtSet);
+				delete_octree(prevTree);
+			}
+			delete_diff_data(diff);
+			prevPtSet = currPtSet;
+			prevTree = currTree;
+		}
+
+		// Delete memory for the last tree in the stream
+		delete_point_set(prevPtSet);
+		delete_octree(prevTree);
 	}
 
 	// Clean up dynamicaly allocated memory
