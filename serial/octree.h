@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <math.h>
 
 
 #define TARGET_DEPTH 3	// Can be added into the input file header, but will violate the .pcd standard
