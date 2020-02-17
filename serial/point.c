@@ -26,10 +26,10 @@ PointSet* get_point_set(const char* const fileName)
 	}
 	
 	Point** points = read_points(fp, numPoints);
+	fclose(fp);
 	if (!points)
 	{
 		printf("Failed to parse point data.\n");
-		fclose(fp);
 		return NULL;
 	}
 
