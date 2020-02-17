@@ -19,24 +19,19 @@ void compress(const OctreeNode* const root, FILE* const fp)
 		unsigned char val = 0;
 		for (int childIdx = 0; childIdx < 8; childIdx++)
 		{
-			if (curr->children[childIdx])
+			if (curr->children[childIdx] && !curr->children[childIdx]->isLeaf)
 			{
-				if (!curr->children[childIdx]->data)	// A node has children iff. data == NULL
-				{
-					enqueue(Q, curr->children[childIdx]);
-				}
-				val |= 1 << (7 - childIdx);
+				enqueue(Q, curr->children[childIdx]);
 			}
 		}
-		fputc(val, fp);
+		fputc(curr->data, fp);
 	}
 	
 	delete_queue(Q);
 }
 
 
-// TODO decompress is currently not working, but should be an easy fix... later
-// Read in the compressed data, build an octree, and write the point set to a .pcd file
+// Decompress the data and build an octree
 OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes)
 {
 	fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr);
@@ -63,10 +58,11 @@ OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs
 		}
 
 		OctreeNode* curr = (OctreeNode*) dequeue(Q);
+		curr->data = dataByte;
 		for (int childIdx = 0; childIdx < 8; childIdx++)
 		{
 			// If the bit is set in the compressed data byte, then that suboctant has a point in it
-			if (dataByte & (1 << (7 - childIdx)))
+			if (dataByte & (1 << childIdx))
 			{
 				curr->children[childIdx] = init_node(currDepth == TARGET_DEPTH);
 				enqueue(Q, curr->children[childIdx]);

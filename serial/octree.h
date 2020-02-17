@@ -55,7 +55,7 @@ DiffDataLL* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 void delete_diff_data(DiffDataLL* list);
 // Public FileIO functions
 void write_header(FILE* const fp, unsigned int numPoints);
-void write_octree_points(FILE* const fp, const OctreeNode* const root, int depth, float lx, float ux, float ly, float uy, float lz, float uz);
+void write_octree_points(FILE* const fp, const OctreeNode* const root, float lx, float ux, float ly, float uy, float lz, float uz);
 FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
 
 

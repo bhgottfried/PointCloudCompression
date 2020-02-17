@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	{
 		printf("Call syntax: ./serial [-c for a single cloud [relative path to .pcd binary file to compress]\n");
 		printf("Call syntax: ./serial [-s for stream] [num point clouds in stream] [paths to files to compress]\n");
-		return EXIT_FAILURE; 
+		return EXIT_FAILURE;
 	}
 	
 	// Parse .pcd data and create set of points for inital cloud
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 			return EXIT_FAILURE;
 		}
 		write_header(fp, numNodes);
-		write_octree_points(fp, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
+		write_octree_points(fp, root, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 
 		// Close decompressed files and free memory
 		delete_octree(root);
