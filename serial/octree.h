@@ -51,7 +51,7 @@ OctreeNode* create_octree(const PointSet* const ptSet);
 void delete_octree(OctreeNode* root);
 // Compression functions
 void compress(const OctreeNode* const root, FILE* const fp);
-void decompress(FILE* const inFilePtr, FILE* const outFilePtr);
+OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes);
 DiffDataLL* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 void delete_diff_data(DiffDataLL* list);
 // Public FileIO functions

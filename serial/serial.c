@@ -45,8 +45,8 @@ int main(int argc, char* argv[])
 	if (!isStream)
 	{
 		// Open output file pointer
-		FILE* outFilePtr = open_out_file(argv[2], "wb", ".pcdcmp");
-		if (!outFilePtr)
+		FILE* fp = open_out_file(argv[2], "wb", ".pcdcmp");
+		if (!fp)
 		{
 			printf("Failed to open the output file location.\n");
 			delete_point_set(P0);
@@ -55,36 +55,40 @@ int main(int argc, char* argv[])
 		}
 		
 		// Write min/max bounds to output file
-		fwrite(P0->mins, FIELD_SIZE, NUM_FIELDS, outFilePtr);
-		fwrite(P0->maxs, FIELD_SIZE, NUM_FIELDS, outFilePtr);
+		fwrite(P0->mins, FIELD_SIZE, NUM_FIELDS, fp);
+		fwrite(P0->maxs, FIELD_SIZE, NUM_FIELDS, fp);
 
 		// Breadth first traversal of the tree to write bytes for populated octants
-		compress(T0, outFilePtr);
-		fclose(outFilePtr);
+		compress(T0, fp);
+		fclose(fp);
 
-		// Decompress newly compressed files for testing
-		FILE* inCompFilePtr = open_out_file(argv[2], "rb", ".pcdcmp");
-		FILE* outDcmpFilePtr = open_out_file(argv[2], "wb", ".pcdcmp.pcd");
-		if (!inCompFilePtr || !outDcmpFilePtr)
+		// Decompress the newly written file to test
+		float fieldMins[NUM_FIELDS];
+		float fieldMaxs[NUM_FIELDS];
+		unsigned int numNodes = 0;
+		fp = open_out_file(argv[2], "rb", ".pcdcmp");
+		if (!fp)
 		{
 			printf("Failed to open files for decompression.\n");
-			if (inCompFilePtr)
-			{
-				fclose(inCompFilePtr);
-			}
-			if (outDcmpFilePtr)
-			{
-				fclose(outDcmpFilePtr);
-			}
 			return EXIT_FAILURE;
 		}
+		OctreeNode* root = decompress(fp, fieldMins, fieldMaxs, &numNodes);
+		fclose(fp);
 
-		// Decompress to test
-		decompress(inCompFilePtr, outDcmpFilePtr);
+		// Write the decompressed centroids to a new .pcd file
+		fp = open_out_file(argv[2], "wb", ".pcdcmp.pcd");
+		if (!fp)
+		{
+			printf("Failed to open output file location for centroid writing.\n");
+			delete_octree(root);
+			return EXIT_FAILURE;
+		}
+		write_header(fp, numNodes);
+		write_octree_points(fp, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
 
-		// Close decompressed files
-		fclose(inCompFilePtr);
-		fclose(outDcmpFilePtr);
+		// Close decompressed files and free memory
+		delete_octree(root);
+		fclose(fp);
 	}
 
 	// Otherwise, compress the point cloud stream cloud by cloud

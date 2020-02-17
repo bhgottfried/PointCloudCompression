@@ -37,10 +37,8 @@ void compress(const OctreeNode* const root, FILE* const fp)
 
 // TODO decompress is currently not working, but should be an easy fix... later
 // Read in the compressed data, build an octree, and write the point set to a .pcd file
-void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
+OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes)
 {
-	float fieldMins[NUM_FIELDS];
-	float fieldMaxs[NUM_FIELDS];
 	fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr);
 	fread(fieldMaxs, FIELD_SIZE, NUM_FIELDS, inFilePtr);
 
@@ -77,10 +75,9 @@ void decompress(FILE* const inFilePtr, FILE* const outFilePtr)
 		}
 	}
 	
+	*numNodes = numNodesCurr;
 	delete_queue(Q);
-	write_header(outFilePtr, numNodesCurr);
-	write_octree_points(outFilePtr, root, 0, fieldMins[0], fieldMaxs[0], fieldMins[1], fieldMaxs[1], fieldMins[2], fieldMaxs[2]);
-	delete_octree(root);
+	return root;
 }
 
 
