@@ -79,6 +79,15 @@ OctreeNode* create_octree(const PointSet* const ptSet)
 }
 
 
+// Construct current tree from previous tree plus diff
+OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff)
+{
+	// TODO
+
+	return NULL;
+}
+
+
 // Free any dynamically allocated memory in the octree
 void delete_octree(OctreeNode* root)
 {

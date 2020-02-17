@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
 		}
 
 		// Write the initial tree with bounds to the output stream
+		fwrite(&(serialization->numBytes), sizeof(serialization->numBytes), 1, fp);
 		fwrite(P0->mins, FIELD_SIZE, NUM_FIELDS, fp);
 		fwrite(P0->maxs, FIELD_SIZE, NUM_FIELDS, fp);
 		write_byte_list(serialization, fp);
@@ -146,6 +147,10 @@ int main(int argc, char* argv[])
 			fwrite(currPtSet->mins, FIELD_SIZE, NUM_FIELDS, fp);
 			fwrite(currPtSet->maxs, FIELD_SIZE, NUM_FIELDS, fp);
 			write_byte_list(diff, fp);
+
+			// Construct current tree from previous tree plus diff
+			OctreeNode* testTree = reconstruct_from_diff(prevTree, diff);
+			delete_octree(testTree);
 
 			// Free dynamically allocated memory for trees, except the initial tree
 			if (cloudIdx > 1)

@@ -53,6 +53,7 @@ void delete_point_set(PointSet* ptSet);
 // Octree functions
 OctreeNode* init_node(bool isLeaf);
 OctreeNode* create_octree(const PointSet* const ptSet);
+OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff);
 void delete_octree(OctreeNode* root);
 // Compression functions
 ByteList* compress(const OctreeNode* const root);
