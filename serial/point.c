@@ -1,5 +1,4 @@
 #include "octree.h"
-#include <math.h>
 
 
 static bool read_line(FILE* const fp, unsigned char* const buffer, const int bufferLen);
@@ -166,7 +165,8 @@ static void get_min_max(PointSet* ptSet)
 
 	for (int fieldIdx = 0; fieldIdx < NUM_FIELDS; fieldIdx++)
 	{
-		ptSet->mins[fieldIdx] -= fabs(ptSet->mins[fieldIdx] * 0.05);
-		ptSet->maxs[fieldIdx] += fabs(ptSet->maxs[fieldIdx] * 0.05);
+		float offset = 0.05 * (ptSet->maxs[fieldIdx] - ptSet->mins[fieldIdx]);
+		ptSet->mins[fieldIdx] -= offset;
+		ptSet->maxs[fieldIdx] += offset;
 	}
 }
