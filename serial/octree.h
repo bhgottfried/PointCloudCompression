@@ -8,7 +8,7 @@
 #include <string.h>
 
 
-#define TARGET_DEPTH 3	// Can be added into the input file header, but will violate the .pcd standard
+#define TARGET_DEPTH 2	// Can be added into the input file header, but will violate the .pcd standard
 #define NUM_FIELDS 3
 #define FIELD_SIZE (sizeof(float))
 #define PATH_0_IDX 3	// Index in argv that contains the path to the first tree in the stream
@@ -16,7 +16,6 @@
 
 typedef struct _Point
 {
-	struct _Point* next;
 	float coords[NUM_FIELDS];
 } Point;
 

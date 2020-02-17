@@ -130,7 +130,6 @@ static Point** read_points(FILE* const fp, unsigned int numPoints)
 		for (int fieldIdx = 0; fieldIdx < NUM_FIELDS; fieldIdx++)
 		{
 			points[ptIdx]->coords[fieldIdx] = fieldData[offset + fieldIdx];
-			points[ptIdx]->next = NULL;
 		}
 	}
 
