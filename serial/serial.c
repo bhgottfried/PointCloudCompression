@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 	else
 	{
 		// Write header to output stream and validate file pointer
-		FILE* fp = write_stream_header(argv[3], numClouds);
+		FILE* fp = write_stream_header(argv[4], numClouds);
 		if (!fp)
 		{
 			delete_point_set(P0);
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 			OctreeNode* testTree = reconstruct_from_diff(prevTree, diff);
 			if (are_equal(testTree, currTree))
 			{
-				printf("success!\n");
+				printf("Trees equal!\n");
 			}
 			else
 			{
