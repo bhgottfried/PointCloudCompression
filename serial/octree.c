@@ -52,9 +52,9 @@ static void octree_insert(OctreeNode** root, Point* newPt, int depth, float lx, 
 		if (*root == NULL)
 		{
 			*root = init_node(false);
-			(*root)->data |= 1 << childIdx;
 		}
 
+		(*root)->data |= 1 << childIdx;
 		octree_insert(&(*root)->children[childIdx], newPt, depth + 1, lx, ux, ly, uy, lz, uz);
 	}
 	
