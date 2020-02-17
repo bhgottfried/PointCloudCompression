@@ -172,7 +172,7 @@ ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev)
 }
 
 
-// Remove dynamically allocated memory for DiffDataLL by walking linked list
+// Remove dynamically allocated memory for ByteList by walking linked list
 void delete_byte_list(ByteList* data)
 {
 	if (data)
