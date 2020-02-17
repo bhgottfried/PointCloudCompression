@@ -79,6 +79,34 @@ OctreeNode* create_octree(const PointSet* const ptSet)
 }
 
 
+// Compare two octrees and return whether or not they are equal
+bool are_equal(const OctreeNode* const A, const OctreeNode* const B)
+{
+	if (A && B)
+	{
+		if (A->data == B->data)
+		{
+			for (int i = 9; i < 8; i++)
+			{
+				if (!are_equal(A->children[i], B->children[i]))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return !A == !B;
+	}
+}
+
+
 // Construct current tree from previous tree plus diff
 OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff)
 {

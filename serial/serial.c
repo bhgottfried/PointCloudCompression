@@ -150,6 +150,14 @@ int main(int argc, char* argv[])
 
 			// Construct current tree from previous tree plus diff
 			OctreeNode* testTree = reconstruct_from_diff(prevTree, diff);
+			if (are_equal(testTree, currTree))
+			{
+				printf("success!\n");
+			}
+			else
+			{
+				printf("Not equal...\n");
+			}
 			delete_octree(testTree);
 
 			// Free dynamically allocated memory for trees, except the initial tree
