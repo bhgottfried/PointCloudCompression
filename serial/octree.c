@@ -107,15 +107,6 @@ bool are_equal(const OctreeNode* const A, const OctreeNode* const B)
 }
 
 
-// Construct current tree from previous tree plus diff
-OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff)
-{
-	// TODO
-
-	return NULL;
-}
-
-
 // Free any dynamically allocated memory in the octree
 void delete_octree(OctreeNode* root)
 {

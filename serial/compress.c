@@ -172,6 +172,27 @@ ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev)
 }
 
 
+// Construct current tree from previous tree plus diff
+OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff)
+{
+	if (!prevTree || !diff)
+	{
+		return NULL;
+	}
+
+	Queue* Q = init_queue();
+	enqueue(Q, prevTree);
+	
+	while (!is_empty(Q))
+	{
+		
+	}
+	
+	delete_queue(Q);
+	return NULL;
+}
+
+
 // Remove dynamically allocated memory for ByteList by walking linked list
 void delete_byte_list(ByteList* data)
 {
