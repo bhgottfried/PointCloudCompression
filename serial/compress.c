@@ -180,16 +180,59 @@ OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteLi
 		return NULL;
 	}
 
-	Queue* Q = init_queue();
-	enqueue(Q, prevTree);
+	OctreeNode* newRoot = init_node(false);
+	Link* link = diff->head;
+	Queue* Qprev = init_queue();
+	Queue* Qnew  = init_queue();
+	enqueue(Qprev, prevTree);
+	enqueue(Qnew, newRoot);
 	
-	while (!is_empty(Q))
+	while (link)
 	{
+		OctreeNode* currPrev = (OctreeNode*) dequeue(Qprev);
+		OctreeNode* currNew  = (OctreeNode*) dequeue(Qnew);
 		
+		for (int childIdx = 0; childIdx < 8; childIdx++)
+		{
+			if ((link->data & (1 << childIdx)) | (currPrev->data & (1 << childIdx)))
+			{
+				// If the previous tree had a child here, but there is not in the new tree
+				if ((link->data & (1 << childIdx)) && (currPrev->data & (1 << childIdx)))
+				{
+					// TODO something with enqueueing NULL for empty subvoxels in that queue
+					// But more checking needs to be done to make sure null ptrs aren't dereferenced
+				}
+
+				// Otherwise the previous tree had a node here and the new tree also has that node
+				else if (link->data & (1 << childIdx))
+				{
+					if (currPrev->children[childIdx]->isLeaf)
+					{
+						currNew->children[childIdx] = init_node(true);
+					}
+					else
+					{
+						currNew->children[childIdx] = init_node(false);
+						enqueue(Qprev, currPrev->children[childIdx]);
+						enqueue(Qnew, currNew->children[childIdx]);
+					}
+				}
+
+				// Otherwise, the previous tree didn't have a node here, but now the new tree does
+				else
+				{
+					// TODO something with enqueueing NULL for empty subvoxels in that queue
+					// But more checking needs to be done to make sure null ptrs aren't dereferenced
+				}
+			}
+		}
+
+		link = link->next;
 	}
 	
-	delete_queue(Q);
-	return NULL;
+	delete_queue(Qprev);
+	delete_queue(Qnew);
+	return newRoot;
 }
 
 
