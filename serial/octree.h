@@ -8,10 +8,11 @@
 #include <string.h>
 
 
-#define TARGET_DEPTH 2	// Can be added into the input file header, but will violate the .pcd standard
+extern unsigned int TARGET_DEPTH;
 #define NUM_FIELDS 3
 #define FIELD_SIZE (sizeof(float))
-#define PATH_0_IDX 4	// Index in argv that contains the path to the first tree in the stream
+#define STREAM_PATH_0_IDX 5	// Index in argv that contains the path to the first tree in the stream
+#define SINGLE_PATH_IDX 3	// Index in argv that contains the path to the .pcd file for single cloud compression
 
 
 typedef struct _Point

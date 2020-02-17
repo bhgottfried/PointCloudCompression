@@ -1,14 +1,17 @@
 #include "octree.h"
 
 
-// Call syntax: ./serial [-c for a single cloud [relative path to .pcd binary file to compress]
-// Call syntax: ./serial [-s for stream] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]
+unsigned int TARGET_DEPTH = 0;
+
+
+// Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]
+// Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]
 int main(int argc, char* argv[])
 {
-	if (argc < 3)
+	if (argc < 4)
 	{
-		printf("Call syntax: ./serial [-c for a single cloud [relative path to .pcd binary file to compress]\n");
-		printf("Call syntax: ./serial [-s for stream] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		printf("Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]\n");
+		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
 		return EXIT_FAILURE; 
 	}
 
@@ -22,17 +25,30 @@ int main(int argc, char* argv[])
 	else if (!strcmp(argv[1], "-s"))
 	{
 		isStream = true;
-		numClouds = atoi(argv[2]);
+		numClouds = atoi(argv[3]);
+		if (numClouds == 0)
+		{
+			printf("Number of clouds must be a positive integer.\n");
+			return EXIT_FAILURE;
+		}
 	}
 	else
 	{
-		printf("Call syntax: ./serial [-c for a single cloud [relative path to .pcd binary file to compress]\n");
-		printf("Call syntax: ./serial [-s for stream] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		printf("Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]\n");
+		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		return EXIT_FAILURE;
+	}
+
+	// Parse target depth
+	TARGET_DEPTH = (unsigned int) atoi(argv[2]);
+	if (TARGET_DEPTH == 0)
+	{
+		printf("Depth must be a positive integer.\n");
 		return EXIT_FAILURE;
 	}
 	
 	// Parse .pcd data and create set of points for inital cloud
-	PointSet* P0 = get_point_set(argv[isStream ? PATH_0_IDX : 2]);
+	PointSet* P0 = get_point_set(argv[isStream ? STREAM_PATH_0_IDX : SINGLE_PATH_IDX]);
 	if (!P0)
 	{
 		return EXIT_FAILURE;
@@ -53,7 +69,7 @@ int main(int argc, char* argv[])
 	if (!isStream)
 	{
 		// Open output file pointer
-		FILE* fp = open_out_file(argv[2], "wb", ".pcdcmp");
+		FILE* fp = open_out_file(argv[SINGLE_PATH_IDX], "wb", ".pcdcmp");
 		if (!fp)
 		{
 			printf("Failed to open the output file location.\n");
@@ -75,7 +91,7 @@ int main(int argc, char* argv[])
 		float fieldMins[NUM_FIELDS];
 		float fieldMaxs[NUM_FIELDS];
 		unsigned int numNodes = 0;
-		fp = open_out_file(argv[2], "rb", ".pcdcmp");
+		fp = open_out_file(argv[SINGLE_PATH_IDX], "rb", ".pcdcmp");
 		if (!fp)
 		{
 			printf("Failed to open files for decompression.\n");
@@ -85,7 +101,7 @@ int main(int argc, char* argv[])
 		fclose(fp);
 
 		// Write the decompressed centroids to a new .pcd file
-		fp = open_out_file(argv[2], "wb", ".pcdcmp.pcd");
+		fp = open_out_file(argv[SINGLE_PATH_IDX], "wb", ".pcdcmp.pcd");
 		if (!fp)
 		{
 			printf("Failed to open output file location for centroid writing.\n");
@@ -127,7 +143,7 @@ int main(int argc, char* argv[])
 		for (unsigned int cloudIdx = 1; cloudIdx < numClouds; cloudIdx++)
 		{
 			// Parse next point data and create octree
-			currPtSet = get_point_set(argv[PATH_0_IDX + cloudIdx]);
+			currPtSet = get_point_set(argv[STREAM_PATH_0_IDX + cloudIdx]);
 			if (!currPtSet)
 			{
 				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", cloudIdx);
