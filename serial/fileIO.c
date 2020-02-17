@@ -2,7 +2,7 @@
 
 
 // Write a pcd header with the number of points of the compressed octree
-void write_header(FILE* const fp, unsigned int numPoints)
+void write_pcd_header(FILE* const fp, unsigned int numPoints)
 {
 	const char version[] = "VERSION .7\n";
 	const char fields[] = "FIELDS x y z\n";
@@ -40,6 +40,35 @@ void write_header(FILE* const fp, unsigned int numPoints)
 	for (int adrIdx = 0; adrIdx < 10; adrIdx++)
 	{
 		fwrite(adrs[adrIdx], sizeof(**adrs), strlen(adrs[adrIdx]), fp);
+	}
+}
+
+
+// Initialize header info for stream output and return file pointer
+FILE* write_stream_header(const char* const path, unsigned int numClouds)
+{
+	FILE* fp = fopen(path, "wb");
+	if (!fp)
+	{
+		printf("Failed to open output stream location.\n");
+		return NULL;
+	}
+	fwrite(&numClouds, sizeof(numClouds), 1, fp);
+	return fp;
+}
+
+
+// Write the number (U32) of bytes follwed by each byte in the linked list sequentially to an output file
+void write_byte_list(const ByteList* const bl, FILE* const fp)
+{
+	if (bl && fp)
+	{
+		Link* link = bl->head;
+		while (link)
+		{
+			fputc(link->data, fp);
+			link = link->next;
+		}
 	}
 }
 
