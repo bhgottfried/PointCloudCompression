@@ -167,3 +167,11 @@ OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteLi
 	delete_queue(Qnew);
 	return newRoot;
 }
+
+
+// Merge two diff lists to get the difference from Ti to Tk
+ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
+{
+
+	return NULL;
+}

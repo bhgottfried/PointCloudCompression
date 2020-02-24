@@ -61,6 +61,7 @@ OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs
 // Diff functions
 ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff);
+ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk);
 // Public FileIO functions
 void write_pcd_header(FILE* const fp, unsigned int numPoints);
 FILE* write_stream_header(const char* const path, unsigned int numClouds);
