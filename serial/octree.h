@@ -58,7 +58,7 @@ OctreeNode* create_octree(const PointSet* const ptSet);
 bool are_equal(const OctreeNode* const t1, const OctreeNode* const t2);
 void delete_octree(OctreeNode* root);
 // Compression functions
-ByteList* compress(const OctreeNode* const root);
+ByteList* serialize(const OctreeNode* const root);
 OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes);
 ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff);

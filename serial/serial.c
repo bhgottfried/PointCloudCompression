@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	OctreeNode* T0 = create_octree(P0);
 
 	// Breadth first traversal of the tree to write bytes for populated octants
-	ByteList* serialization = compress(T0);
+	ByteList* serialization = serialize(T0);
 	if (!serialization)
 	{
 		printf("Failed to compress tree");

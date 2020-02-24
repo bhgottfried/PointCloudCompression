@@ -3,7 +3,7 @@
 
 
 // Breadth first traversal of the tree to write bytes for populated octants
-ByteList* compress(const OctreeNode* const root)
+ByteList* serialize(const OctreeNode* const root)
 {
 	if (!root)
 	{
