@@ -194,6 +194,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Clean up dynamicaly allocated memory
+	delete_byte_list(serialization);
 	delete_point_set(P0);
 	delete_octree(T0);
 
