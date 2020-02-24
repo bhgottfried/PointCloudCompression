@@ -42,6 +42,7 @@ ByteList* compress(const OctreeNode* const root)
 		}
 		link->data = val;
 		link->next = NULL;
+		cloud->tail = link;
 	}
 	
 	delete_queue(Q);
@@ -148,6 +149,7 @@ ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev)
 		}
 		diffNode->data = diffByte;
 		diffNode->next = NULL;
+		diff->tail = diffNode;
 
 		// Enqueue children for all subvoxels with data
 		for (int childIdx = 0; childIdx < 8; childIdx++)
@@ -187,42 +189,62 @@ OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteLi
 	enqueue(Qprev, prevTree);
 	enqueue(Qnew, newRoot);
 	
+	int currDepth = 0;
+	int numNodesPrev = 1;
+	int numNodesCurr = 1;
+	
 	while (link)
 	{
+		// Are we in a deeper level of the octree?
+		if (!--numNodesPrev)
+		{
+			numNodesPrev = numNodesCurr;
+			numNodesCurr = 0;
+			currDepth++;
+		}
+
 		OctreeNode* currPrev = (OctreeNode*) dequeue(Qprev);
 		OctreeNode* currNew  = (OctreeNode*) dequeue(Qnew);
 		
 		for (int childIdx = 0; childIdx < 8; childIdx++)
 		{
-			if ((link->data & (1 << childIdx)) | (currPrev->data & (1 << childIdx)))
+			if ((link->data & (1 << childIdx)) || (currPrev && (currPrev->data & (1 << childIdx))))
 			{
+				numNodesCurr++;
+				
 				// If the previous tree had a child here, but there is not in the new tree
-				if ((link->data & (1 << childIdx)) && (currPrev->data & (1 << childIdx)))
+				if ((link->data & (1 << childIdx)) && currPrev && (currPrev->data & (1 << childIdx)))
 				{
-					// TODO something with enqueueing NULL for empty subvoxels in that queue
-					// But more checking needs to be done to make sure null ptrs aren't dereferenced
+					if (currDepth < TARGET_DEPTH - 1)
+					{
+						enqueue(Qprev, currPrev->children[childIdx]);
+						enqueue(Qnew, NULL);
+					}
 				}
 
-				// Otherwise the previous tree had a node here and the new tree also has that node
-				else if (link->data & (1 << childIdx))
+				// Otherwise, the new tree has a node in this subvoxel, but the previous may or may not
+				else
 				{
-					if (currPrev->children[childIdx]->isLeaf)
+					if (currDepth == TARGET_DEPTH - 1)
 					{
 						currNew->children[childIdx] = init_node(true);
 					}
 					else
 					{
 						currNew->children[childIdx] = init_node(false);
-						enqueue(Qprev, currPrev->children[childIdx]);
 						enqueue(Qnew, currNew->children[childIdx]);
-					}
-				}
 
-				// Otherwise, the previous tree didn't have a node here, but now the new tree does
-				else
-				{
-					// TODO something with enqueueing NULL for empty subvoxels in that queue
-					// But more checking needs to be done to make sure null ptrs aren't dereferenced
+						if (link->data & (1 << childIdx))
+						{
+							// Previous tree was empty in this subvoxel, but the new tree is not
+							enqueue(Qprev, NULL);
+						}
+						else
+						{
+							// Previous tree had data in this subvoxel, and so does the new
+							enqueue(Qprev, currPrev->children[childIdx]);
+						}	
+					}
 				}
 			}
 		}
