@@ -225,25 +225,30 @@ OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteLi
 				// Otherwise, the new tree has a node in this subvoxel, but the previous may or may not
 				else
 				{
-					if (currDepth == TARGET_DEPTH - 1)
+					if (currNew)
 					{
-						currNew->children[childIdx] = init_node(true);
-					}
-					else
-					{
-						currNew->children[childIdx] = init_node(false);
-						enqueue(Qnew, currNew->children[childIdx]);
-
-						if (link->data & (1 << childIdx))
+						if (currDepth == TARGET_DEPTH)
 						{
-							// Previous tree was empty in this subvoxel, but the new tree is not
-							enqueue(Qprev, NULL);
+							currNew->children[childIdx] = init_node(true);
+							currNew->data |= 1 << childIdx;
 						}
 						else
 						{
-							// Previous tree had data in this subvoxel, and so does the new
-							enqueue(Qprev, currPrev->children[childIdx]);
-						}	
+							currNew->children[childIdx] = init_node(false);
+							enqueue(Qnew, currNew->children[childIdx]);
+							currNew->data |= 1 << childIdx;
+
+							if (link->data & (1 << childIdx))
+							{
+								// Previous tree was empty in this subvoxel, but the new tree is not
+								enqueue(Qprev, NULL);
+							}
+							else
+							{
+								// Previous tree had data in this subvoxel, and so does the new
+								enqueue(Qprev, currPrev->children[childIdx]);
+							}	
+						}
 					}
 				}
 			}
