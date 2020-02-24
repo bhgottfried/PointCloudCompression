@@ -190,6 +190,7 @@ int main(int argc, char* argv[])
 		// Delete memory for the last tree in the stream
 		delete_point_set(prevPtSet);
 		delete_octree(prevTree);
+		fclose(fp);
 	}
 
 	// Clean up dynamicaly allocated memory
