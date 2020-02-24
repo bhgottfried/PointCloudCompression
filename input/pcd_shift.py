@@ -20,7 +20,6 @@ points.sort(key = itemgetter(0,1,2))
 
 # Shift all points of a random, adjacent block of points
 shiftSlice = random.randint(0, int(len(points) - 1 - int(sys.argv[1])))
-print(shiftSlice)
 for i in range(shiftSlice, shiftSlice + int(sys.argv[1])):
     for j in range(3):
         # Shift each coordinate by a random amount [-0.25x, 0.25x]
