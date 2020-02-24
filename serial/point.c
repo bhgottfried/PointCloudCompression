@@ -42,21 +42,6 @@ PointSet* get_point_set(const char* const fileName)
 }
 
 
-// Free dynamically allocated memory in PointSet
-void delete_point_set(PointSet* ptSet)
-{
-	if (ptSet)
-	{
-		for (unsigned int ptIdx = 0; ptIdx < ptSet->numPoints; ptIdx++)
-		{
-			free(ptSet->points[ptIdx]);
-		}
-		free(ptSet->points);
-		free(ptSet);
-	}
-}
-
-
 // Read until a '\n' character is reached or the buffer is full
 // Returns true for a successful read, else if the buffer will overflow, false.
 static bool read_line(FILE* const fp, unsigned char* const buffer, const int bufferLen)

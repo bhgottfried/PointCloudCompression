@@ -105,17 +105,3 @@ bool are_equal(const OctreeNode* const A, const OctreeNode* const B)
 		return !A == !B;
 	}
 }
-
-
-// Free any dynamically allocated memory in the octree
-void delete_octree(OctreeNode* root)
-{
-	if (root)
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			delete_octree(root->children[i]);
-		}
-		free(root);
-	}
-}

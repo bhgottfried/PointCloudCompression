@@ -51,24 +51,26 @@ typedef struct _ByteList
 
 // Point functions
 PointSet* get_point_set(const char* const fileName);
-void delete_point_set(PointSet* ptSet);
 // Octree functions
 OctreeNode* init_node(bool isLeaf);
 OctreeNode* create_octree(const PointSet* const ptSet);
 bool are_equal(const OctreeNode* const t1, const OctreeNode* const t2);
-void delete_octree(OctreeNode* root);
 // Compression functions
 ByteList* serialize(const OctreeNode* const root);
 OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes);
+// Diff functions
 ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff);
-void delete_byte_list(ByteList* data);
 // Public FileIO functions
 void write_pcd_header(FILE* const fp, unsigned int numPoints);
 FILE* write_stream_header(const char* const path, unsigned int numClouds);
 void write_byte_list(const ByteList* const bl, FILE* const fp);
 void write_octree_points(FILE* const fp, const OctreeNode* const root, float lx, float ux, float ly, float uy, float lz, float uz);
 FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
+// Cleanup functions
+void delete_point_set(PointSet* ptSet);
+void delete_octree(OctreeNode* root);
+void delete_byte_list(ByteList* data);
 
 
 #endif
