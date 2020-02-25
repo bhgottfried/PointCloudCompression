@@ -184,9 +184,10 @@ int main(int argc, char* argv[])
 			{
 				// Merge all the diffs, reconstruct using the previous diff, and compare
 				ByteList** merges = malloc((numClouds - 2) * sizeof(*merges));
-				for (int i = 0; i < numClouds - 2; i++)
+				merges[0] = merge_diff(diffs[0], diffs[1]);
+				for (int i = 1; i < numClouds - 2; i++)
 				{
-					merges[i] = merge_diff(diffs[i], diffs[i + 1]);
+					merges[i] = merge_diff(merges[i - 1], diffs[i + 1]);
 				}
 
 				// Build the Tn from T0 and all the merged diffs
