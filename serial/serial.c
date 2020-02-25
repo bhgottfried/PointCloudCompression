@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 					merges[i] = merge_diff(merges[i - 1], diffs[i + 1]);
 				}
 
-				// Build the Tn from T0 and all the merged diffs
+				// Build the Tn from T0 and all the merged diffs seperately
 				testTree = reconstruct_from_diff(T0, merges[numClouds - 3]);
 				if (are_equal(testTree, currTree))
 				{
@@ -200,13 +200,54 @@ int main(int argc, char* argv[])
 				{
 					printf("merge_diff failure...\n");
 				}
+				delete_octree(testTree);
+
+				// Merge the lower half of the diffs, then the upper, then merge the 2 merges
+				int numLower = (numClouds - 1) / 2;
+				int numUpper = (numClouds - 1) / 2 + (numClouds - 1) % 2;
+				ByteList** lowerMerges = malloc(numLower * sizeof(*lowerMerges));
+				ByteList** upperMerges = malloc(numUpper * sizeof(*upperMerges));
+
+				lowerMerges[0] = merge_diff(diffs[0], diffs[1]);
+				for (int i = 1; i < numLower; i++)
+				{
+					lowerMerges[i] = merge_diff(lowerMerges[i - 1], diffs[i + 1]);
+				}
+
+				upperMerges[0] = merge_diff(diffs[numLower], diffs[numLower + 1]);
+				for (int i = 1; i < numUpper; i++)
+				{
+					upperMerges[i] = merge_diff(upperMerges[i - 1], diffs[i + numLower + 1]);
+				}
+
+				ByteList* totalDiff = merge_diff(lowerMerges[numLower - 1], upperMerges[numUpper - 1]);
+				testTree = reconstruct_from_diff(T0, totalDiff);
+				if (are_equal(testTree, currTree))
+				{
+					printf("Cumulative merge success!\n");
+				}
+				else
+				{
+					printf("Cumulative merge failure...\n");
+				}
 
 				// Delete dynamically allocated memory for testing
+				for (int i = 0; i < numLower; i++)
+				{
+					delete_byte_list(lowerMerges[i]);
+				}
+				for (int i = 0; i < numUpper; i++)
+				{
+					delete_byte_list(upperMerges[i]);
+				}
 				for (int i = 0; i < numClouds - 2; i++)
 				{
 					delete_byte_list(merges[i]);
 				}
 				free(merges);
+				free(lowerMerges);
+				free(upperMerges);
+				delete_byte_list(totalDiff);
 				delete_octree(testTree);
 			}
 
