@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
 				}
 
 				// Delete dynamically allocated memory for testing
-				for (int i = 0; i < numClouds - 1; i++)
+				for (int i = 0; i < numClouds - 2; i++)
 				{
 					delete_byte_list(merges[i]);
 				}
