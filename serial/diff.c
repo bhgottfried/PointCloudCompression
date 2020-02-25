@@ -205,12 +205,12 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 			if (oByte & (1 << bitIdx))
 			{
 				unsigned char xByte = 0;
-				if (currOld->data & (1 << bitIdx))
+				if ((currOld->data & (1 << bitIdx)) && dataOld)
 				{
 					xByte ^= dataOld->data;
 					dataOld = dataOld->next;
 				}
-				if (currNew->data & (1 << bitIdx))
+				if ((currNew->data & (1 << bitIdx)) && dataNew)
 				{
 					xByte ^= dataNew->data;
 					dataNew = dataNew->next;
