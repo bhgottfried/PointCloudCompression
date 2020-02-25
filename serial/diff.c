@@ -178,8 +178,6 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 		return NULL;
 	}
 
-	const unsigned char zero = 0;	// This will make sense later...
-
 	// Initialize resulting, merged list
 	ByteList* sum = malloc(sizeof(*sum));
 	sum->head = malloc(sizeof(*sum->head));
@@ -189,68 +187,71 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 	Link* mergedLink = sum->head;
 	Link* currOld = Dij->head;
 	Link* currNew = Djk->head;
+	Link* dataOld = currOld;
+	Link* dataNew = currNew;
+
+	// Append the XORed heads to the result
+	sum->numBytes++;
+	mergedLink->data = currOld->data ^ currNew->data;
+	mergedLink->next = NULL;
+	sum->tail = mergedLink;
 	
-	// Initialize queues to hold data bytes for each diff list
-	Queue* Qold = init_queue();
-	Queue* Qnew = init_queue();
-	enqueue(Qold, &currOld->data);
-	enqueue(Qnew, &currNew->data);
-	currOld = currOld->next;
-	currNew = currNew->next;
-
-	while (!is_empty(Qold) || !is_empty(Qnew))
+	while (dataOld && dataNew && currOld && currNew)
 	{
-		// Get next diff data bytes that correspond to the same subvoxel and OR/XOR them
-		unsigned char oldByte = *(unsigned char*) dequeue(Qold);
-		unsigned char newByte = *(unsigned char*) dequeue(Qnew);
-		unsigned char xByte = oldByte ^ newByte;
-		unsigned char oByte = oldByte | newByte;
-		
-		// Append the merged difference byte to the linked list
-		if (sum->numBytes++)
+		unsigned char oByte = currOld->data | currNew->data;
+		for (int bitIdx = 0; bitIdx < 8; bitIdx++)
 		{
-			mergedLink->next = malloc(sizeof(*mergedLink));
-			mergedLink = mergedLink->next;
-		}
-		mergedLink->data = xByte;
-		mergedLink->next = NULL;
-		sum->tail = mergedLink;
-
-		// Interleave diff bytes into queues. If they do not exist, enqueue a zero byte
-		for (int childIdx = 0; childIdx < 8; childIdx++)
-		{
-			if (oByte & (1 << childIdx))
+			// Interleave diff bytes for existing diff bytes for this subvoxel
+			if (oByte & (1 << bitIdx))
 			{
-				if (oldByte & (1 << childIdx))
+				unsigned char xByte = 0;
+				if (currOld->data & (1 << bitIdx))
 				{
-					enqueue(Qold, &currOld->data);
-					if (currOld)
-					{
-						currOld = currOld->next;
-					}
+					xByte ^= dataOld->data;
+					dataOld = dataOld->next;
 				}
-				else
+				if (currNew->data & (1 << bitIdx))
 				{
-					enqueue(Qold, &zero);
+					xByte ^= dataNew->data;
+					dataNew = dataNew->next;
 				}
 
-				if (newByte & (1 << childIdx))
-				{
-					enqueue(Qnew, &currNew->data);
-					if (currNew)
-					{
-						currNew = currNew->next;
-					}
-				}
-				else
-				{
-					enqueue(Qnew, &zero);
-				}
+				// Append the merged difference byte to the linked list
+				mergedLink->next = malloc(sizeof(*mergedLink));
+				mergedLink = mergedLink->next;
+				mergedLink->data = xByte;
+				mergedLink->next = NULL;
+				sum->tail = mergedLink;
+				sum->numBytes++;
 			}
 		}
+
+		// Proceed to the next subtree
+		currOld = currOld->next;
+		currNew = currNew->next;
 	}
-	
-	delete_queue(Qold);
-	delete_queue(Qnew);
+
+	// Append any remaining bytes that do not need to be interleaved
+	while (dataOld)
+	{
+		mergedLink->next = malloc(sizeof(*mergedLink));
+		mergedLink = mergedLink->next;
+		mergedLink->data = dataOld->data;
+		mergedLink->next = NULL;
+		dataOld = dataOld->next;
+		sum->tail = mergedLink;
+		sum->numBytes++;
+	}
+	while (dataNew)
+	{
+		mergedLink->next = malloc(sizeof(*mergedLink));
+		mergedLink = mergedLink->next;
+		mergedLink->data = dataNew->data;
+		mergedLink->next = NULL;
+		dataNew = dataNew->next;
+		sum->tail = mergedLink;
+		sum->numBytes++;
+	}
+
 	return sum;
 }
