@@ -47,3 +47,38 @@ void delete_byte_list(ByteList* data)
 		free(data);
 	}
 }
+
+
+// Create a deep copy of a byte list
+ByteList* copy_byte_list(const ByteList* const bl)
+{
+	if (!bl || !bl->head)
+	{
+		return NULL;
+	}
+
+	ByteList* copy = malloc(sizeof(*copy));
+	copy->numBytes = bl->numBytes;
+	copy->head = malloc(sizeof(*copy->head));
+
+	Link* currBl = bl->head;
+	Link* currCopy = copy->head;
+
+	for (int i = 0; i < bl->numBytes && currBl; i++)
+	{
+		currCopy->data = currBl->data;
+		if (i < bl->numBytes - 1)
+		{
+			currCopy->next = malloc(sizeof(*currCopy->next));
+			currCopy = currCopy->next;
+			currBl = currBl->next;
+		}
+		else
+		{
+			currCopy->next = NULL;
+			copy->tail = currCopy;
+		}
+	}
+
+	return copy;
+}

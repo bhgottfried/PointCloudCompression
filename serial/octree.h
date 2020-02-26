@@ -68,10 +68,11 @@ FILE* write_stream_header(const char* const path, unsigned int numClouds);
 void write_byte_list(const ByteList* const bl, FILE* const fp);
 void write_octree_points(FILE* const fp, const OctreeNode* const root, float lx, float ux, float ly, float uy, float lz, float uz);
 FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
-// Cleanup functions
+// Memory functions
 void delete_point_set(PointSet* ptSet);
 void delete_octree(OctreeNode* root);
 void delete_byte_list(ByteList* data);
+ByteList* copy_byte_list(const ByteList* const bl);
 
 
 #endif
