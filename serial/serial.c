@@ -131,8 +131,9 @@ int main(int argc, char* argv[])
 
 		// Create array to hold diff lists for each new frame (for testing)
 		// When not testing, use a single diff pointer and don't store merges
-		ByteList** diffs = malloc((numClouds - 1) * sizeof(*diffs));
-		ByteList** merges = malloc((numClouds - 1) * sizeof(*merges));
+		int numDiffs = numClouds - 1;
+		ByteList** diffs = malloc(numDiffs * sizeof(*diffs));
+		ByteList** merges = malloc(numDiffs * sizeof(*merges));
 
 		// Write the initial tree with bounds to the output stream
 		fwrite(&(serialization->numBytes), sizeof(serialization->numBytes), 1, fp);
@@ -145,13 +146,13 @@ int main(int argc, char* argv[])
 		OctreeNode* prevTree = T0;
 		OctreeNode* currTree = NULL;
 
-		for (unsigned int cloudIdx = 1; cloudIdx < numClouds; cloudIdx++)
+		for (unsigned int diffIdx = 0; diffIdx < numDiffs; diffIdx++)
 		{
 			// Parse next point data and create octree
-			currPtSet = get_point_set(argv[STREAM_PATH_0_IDX + cloudIdx]);
+			currPtSet = get_point_set(argv[STREAM_PATH_0_IDX + diffIdx + 1]);
 			if (!currPtSet)
 			{
-				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", cloudIdx);
+				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", diffIdx + 1);
 				delete_point_set(prevPtSet);
 				delete_octree(prevTree);
 				delete_point_set(P0);
@@ -161,71 +162,88 @@ int main(int argc, char* argv[])
 			currTree = create_octree(currPtSet);
 
 			// Calc bitwise difference between last tree and current tree
-			diffs[cloudIdx - 1] = calc_diff(currTree, prevTree);
+			diffs[diffIdx] = calc_diff(currTree, prevTree);
 			
 			// Write new bounds of tree followed by diff from previous frame to new.
-			fwrite(&(diffs[cloudIdx - 1]->numBytes), sizeof(diffs[cloudIdx - 1]->numBytes), 1, fp);
+			fwrite(&(diffs[diffIdx]->numBytes), sizeof(diffs[diffIdx]->numBytes), 1, fp);
 			fwrite(currPtSet->mins, FIELD_SIZE, NUM_FIELDS, fp);
 			fwrite(currPtSet->maxs, FIELD_SIZE, NUM_FIELDS, fp);
-			write_byte_list(diffs[cloudIdx - 1], fp);
+			write_byte_list(diffs[diffIdx], fp);
 
 			// ------------------------------ BEGIN TEST ONLY SECTION ------------------------------
 			// Construct current tree from previous tree plus diff
-			OctreeNode* testTree = reconstruct_from_diff(prevTree, diffs[cloudIdx - 1]);
+			OctreeNode* testTree = reconstruct_from_diff(prevTree, diffs[diffIdx]);
 			if (are_equal(testTree, currTree))
 			{
-				printf("reconstruct_from_diff %d success!\n", cloudIdx - 1);
+				printf("reconstruct_from_diff %d success!\n", diffIdx);
 			}
 			else
 			{
-				printf("reconstruct_from_diff %d failure...\n", cloudIdx - 1);
+				printf("reconstruct_from_diff %d failure...\n", diffIdx);
 			}
 			delete_octree(testTree);
 
 			// Merge the new diff with the previously merged diffs
-			if (cloudIdx == 1)
+			if (diffIdx)
 			{
-				merges[cloudIdx - 1] = diffs[cloudIdx - 1];
+				merges[diffIdx] = merge_diff(merges[diffIdx - 1], diffs[diffIdx]);
 			}
 			else
 			{
-				merges[cloudIdx - 1] = merge_diff(merges[cloudIdx - 2], diffs[cloudIdx - 1]);
+				merges[diffIdx] = diffs[diffIdx];
 			}
 			
 			// Ensure that the merge was successful
-			testTree = reconstruct_from_diff(T0, merges[cloudIdx - 1]);
+			testTree = reconstruct_from_diff(T0, merges[diffIdx]);
 			if (are_equal(testTree, currTree))
 			{
-				printf("merge_diff %d success!\n", cloudIdx - 1);
+				printf("merge_diff %d success!\n", diffIdx);
 			}
 			else
 			{
-				printf("merge_diff %d failure...\n", cloudIdx - 1);
+				printf("merge_diff %d failure...\n", diffIdx);
 			}
 			delete_octree(testTree);
 
-			// Serial prefix sum and test memory cleanup
-			if (cloudIdx == numClouds - 1)
+			// Serial prefix sum and test memory cleanup after final tree
+			if (diffIdx == numDiffs - 1)
 			{
-				int numLower = (numClouds - 1) / 2;
-				int numUpper = (numClouds - 1) / 2 + (numClouds - 1) % 2;
-				ByteList** lowerMerges = malloc(numLower * sizeof(*lowerMerges));
-				ByteList** upperMerges = malloc(numUpper * sizeof(*upperMerges));
-
-				lowerMerges[0] = merge_diff(diffs[0], diffs[1]);
-				for (int i = 1; i < numLower; i++)
+				int currNum = numDiffs;
+				ByteList** currMerges = malloc(currNum * sizeof(*currMerges));
+				for (int i = 0; i < currNum; i++)
 				{
-					lowerMerges[i] = merge_diff(lowerMerges[i - 1], diffs[i + 1]);
+					currMerges[i] = copy_byte_list(diffs[i]);
 				}
 
-				upperMerges[0] = merge_diff(diffs[numLower], diffs[numLower + 1]);
-				for (int i = 1; i < numUpper; i++)
+				while (currNum > 1)
 				{
-					upperMerges[i] = merge_diff(upperMerges[i - 1], diffs[i + numLower + 1]);
+					int nextNum = currNum / 2 + currNum % 2;
+					ByteList** nextMerges = malloc(nextNum * sizeof(*nextMerges));
+					for (int i = 0; i < nextNum; i++)
+					{
+						if (i < nextNum / 2)
+						{
+							nextMerges[i] = merge_diff(currMerges[2 * i], currMerges[2 * i + 1]);
+						}
+						else	// If curr num is odd, there will be a loner to not get merged
+						{
+							nextMerges[i] = currMerges[currNum - 1];
+						}
+					}
+
+					// Remove old diffs/merges that are no longer needed
+					for (int i = 0; i < currNum; i++)
+					{
+						delete_byte_list(currMerges[i]);
+					}
+					free(currMerges);
+					
+					currNum = nextNum;
+					currMerges = nextMerges;
 				}
 
-				ByteList* totalDiff = merge_diff(lowerMerges[numLower - 1], upperMerges[numUpper - 1]);
-				testTree = reconstruct_from_diff(T0, totalDiff);
+				// Test construction of prefix merge
+				testTree = reconstruct_from_diff(T0, *currMerges);
 				if (are_equal(testTree, currTree))
 				{
 					printf("Prefix merge success!\n");
@@ -235,33 +253,25 @@ int main(int argc, char* argv[])
 					printf("Prefix merge failure...\n");
 				}
 
+				// Delete prefix memory
+				delete_octree(testTree);
+				delete_byte_list(*currMerges);
+				free(currMerges);
+
 				// Delete list of diffs and merges
-				for (int i = 0; i < numClouds - 1; i++)
+				delete_byte_list(diffs[0]);
+				for (int i = 1; i < numDiffs; i++)
 				{
 					delete_byte_list(diffs[i]);
 					delete_byte_list(merges[i]);
 				}
 				free(merges);
 				free(diffs);
-
-				// Delete prefix memory
-				for (int i = 0; i < numLower; i++)
-				{
-					delete_byte_list(lowerMerges[i]);
-				}
-				for (int i = 0; i < numUpper; i++)
-				{
-					delete_byte_list(upperMerges[i]);
-				}
-				free(lowerMerges);
-				free(upperMerges);
-				delete_byte_list(totalDiff);
-				delete_octree(testTree);
 			}
 			// ------------------------------ END TEST ONLY SECTION ------------------------------
 
 			// Free dynamically allocated memory for trees, except the initial tree
-			if (cloudIdx > 1)
+			if (diffIdx)
 			{
 				delete_point_set(prevPtSet);
 				delete_octree(prevTree);
