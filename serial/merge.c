@@ -89,8 +89,41 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 }
 
 
+// TODO
 // Perform serial prefix-sum style joining of octree frames using initial tree and differences
 OctreeNode** prefix_merge(const OctreeNode* const T0, const ByteList* const diffs[], unsigned int numDiffs)
 {
+	int currNum = numDiffs;
+	ByteList** currMerges = malloc(currNum * sizeof(*currMerges));
+	for (int i = 0; i < currNum; i++)
+	{
+		currMerges[i] = copy_byte_list(diffs[i]);
+	}
 
+	while (currNum > 1)
+	{
+		int nextNum = currNum / 2 + currNum % 2;
+		ByteList** nextMerges = malloc(nextNum * sizeof(*nextMerges));
+		for (int i = 0; i < nextNum; i++)
+		{
+			if (i < nextNum / 2)
+			{
+				nextMerges[i] = merge_diff(currMerges[2 * i], currMerges[2 * i + 1]);
+			}
+			else	// If curr num is odd, there will be a loner to not get merged
+			{
+				nextMerges[i] = currMerges[currNum - 1];
+			}
+		}
+
+		// Remove old diffs/merges that are no longer needed
+		for (int i = 0; i < currNum; i++)
+		{
+			delete_byte_list(currMerges[i]);
+		}
+		free(currMerges);
+		
+		currNum = nextNum;
+		currMerges = nextMerges;
+	}
 }
