@@ -70,13 +70,14 @@ FILE* write_stream_header(const char* const path, unsigned int numClouds);
 void write_byte_list(const ByteList* const bl, FILE* const fp);
 void write_octree_points(FILE* const fp, const OctreeNode* const root, float lx, float ux, float ly, float uy, float lz, float uz);
 FILE* open_out_file(const char* const inFile, char* mode, char* fileExt);
-// Memory functions
+// Memory deallocation and deep copy functions
 void delete_point_set(PointSet* ptSet);
 void delete_octree(OctreeNode* root);
 void delete_byte_list(ByteList* data);
 ByteList* copy_byte_list(const ByteList* const bl);
+OctreeNode* copy_octree(const OctreeNode* const tree);
 // Test functions
-void init_test(unsigned int _numDiffs, const OctreeNode* const _T0);
+void init_test(unsigned int _numDiffs, OctreeNode* T0);
 void test(OctreeNode* Ti, ByteList* Di, unsigned int i);
 void clean_up_test(void);
 

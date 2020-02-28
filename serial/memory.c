@@ -82,3 +82,24 @@ ByteList* copy_byte_list(const ByteList* const bl)
 
 	return copy;
 }
+
+
+// Create a deep copy of an octree
+OctreeNode* copy_octree(const OctreeNode* const tree)
+{
+	if (!tree)
+	{
+		return NULL;
+	}
+
+	OctreeNode* copy = malloc(sizeof(*copy));
+	copy->data = tree->data;
+	copy->isLeaf = tree->isLeaf;
+
+	for (int i = 0; i < 8; i++)
+	{
+		copy->children[i] = copy_octree(tree->children[i]);
+	}
+
+	return copy;
+}

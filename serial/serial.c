@@ -131,13 +131,14 @@ int main(int argc, char* argv[])
 
 		// Initialize values for stream compression calculations and test
 		int numDiffs = numClouds - 1;
-		init_test(numDiffs, T0);
+		init_test(numDiffs, copy_octree(T0));
 
 		// Write the initial tree with bounds to the output stream
 		fwrite(&(serialization->numBytes), sizeof(serialization->numBytes), 1, fp);
 		fwrite(P0->mins, FIELD_SIZE, NUM_FIELDS, fp);
 		fwrite(P0->maxs, FIELD_SIZE, NUM_FIELDS, fp);
 		write_byte_list(serialization, fp);
+		delete_byte_list(serialization);
 
 		PointSet* prevPtSet  = P0;
 		PointSet* currPtSet  = NULL;
@@ -169,17 +170,14 @@ int main(int argc, char* argv[])
 			write_byte_list(currDiff, fp);
 
 			// Test that the reconstruction from diff, merge, and prefix merge match the current tree
-			test(currTree, copy_byte_list(currDiff), diffIdx);
+			test(copy_octree(currTree), copy_byte_list(currDiff), diffIdx);
 
 			// Delete memory for the current diff
 			delete_byte_list(currDiff);
 
-			// Free dynamically allocated memory for trees, except the initial tree
-			if (diffIdx)
-			{
-				delete_point_set(prevPtSet);
-				delete_octree(prevTree);
-			}
+			// Free dynamically allocated memory for the previous tree
+			delete_point_set(prevPtSet);
+			delete_octree(prevTree);
 			prevPtSet = currPtSet;
 			prevTree = currTree;
 		}
@@ -190,11 +188,8 @@ int main(int argc, char* argv[])
 		fclose(fp);
 	}
 
-	// Clean up dynamicaly allocated memory
+	// Clean up dynamicaly allocated memory for testing
 	clean_up_test();
-	delete_byte_list(serialization);
-	delete_point_set(P0);
-	delete_octree(T0);
 
 	return EXIT_SUCCESS;
 }
