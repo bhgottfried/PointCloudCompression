@@ -63,7 +63,7 @@ ByteList* calc_diff(const OctreeNode* curr, const OctreeNode* prev);
 OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteList* const diff);
 // Merge functions
 ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk);
-OctreeNode** prefix_merge(const OctreeNode* const T0, const ByteList* const diffs[], unsigned int numDiffs);
+OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned int numDiffs);
 // Public FileIO functions
 void write_pcd_header(FILE* const fp, unsigned int numPoints);
 FILE* write_stream_header(const char* const path, unsigned int numClouds);
@@ -75,6 +75,10 @@ void delete_point_set(PointSet* ptSet);
 void delete_octree(OctreeNode* root);
 void delete_byte_list(ByteList* data);
 ByteList* copy_byte_list(const ByteList* const bl);
+// Test functions
+void init_test(unsigned int _numDiffs, const OctreeNode* const _T0);
+void test(OctreeNode* Ti, ByteList* Di, unsigned int i);
+void clean_up_test(void);
 
 
 #endif
