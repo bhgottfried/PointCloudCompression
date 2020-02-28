@@ -87,3 +87,10 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 
 	return sum;
 }
+
+
+// Perform serial prefix-sum style joining of octree frames using initial tree and differences
+OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned int numDiffs)
+{
+
+}
