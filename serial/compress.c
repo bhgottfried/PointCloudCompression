@@ -53,8 +53,12 @@ ByteList* serialize(const OctreeNode* const root)
 // Decompress the data and build an octree
 OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes)
 {
-	fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr);
-	fread(fieldMaxs, FIELD_SIZE, NUM_FIELDS, inFilePtr);
+	if (fread(fieldMins, FIELD_SIZE, NUM_FIELDS, inFilePtr) != NUM_FIELDS ||
+		fread(fieldMaxs, FIELD_SIZE, NUM_FIELDS, inFilePtr) != NUM_FIELDS)
+	{
+		printf("Failed to read field bounds.\n");
+		return NULL;
+	}
 
 	OctreeNode* root = init_node(false);
 	Queue* Q = init_queue();
