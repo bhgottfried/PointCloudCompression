@@ -14,10 +14,10 @@ clean:
 	rm serial
 	
 run:
-	./serial -s 5 5 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd
+	./serial -s 5 17 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd ../input/rand2.pcd ../input/rand5.pcd ../input/rand10.pcd ../input/rand2.pcd ../input/rand10.shift.pcd ../input/rand3.pcd ../input/rand10.shift.pcd ../input/rand5.pcd ../input/rand1000.pcd ../input/rand3.pcd ../input/rand5.pcd ../input/rand2.pcd
 
 val:
-	valgrind ./serial -s 5 5 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd
+	valgrind ./serial -s 5 17 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd ../input/rand2.pcd ../input/rand5.pcd ../input/rand10.pcd ../input/rand2.pcd ../input/rand10.shift.pcd ../input/rand3.pcd ../input/rand10.shift.pcd ../input/rand5.pcd ../input/rand1000.pcd ../input/rand3.pcd ../input/rand5.pcd ../input/rand2.pcd
 
 gdb:
-	gdb --args ./serial -s 5 5 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd
+	gdb --args ./serial -s 5 17 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd ../input/rand2.pcd ../input/rand5.pcd ../input/rand10.pcd ../input/rand2.pcd ../input/rand10.shift.pcd ../input/rand3.pcd ../input/rand10.shift.pcd ../input/rand5.pcd ../input/rand1000.pcd ../input/rand3.pcd ../input/rand5.pcd ../input/rand2.pcd
