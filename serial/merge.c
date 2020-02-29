@@ -95,14 +95,14 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 	ByteList** newMerges = malloc(numDiffs * sizeof(*newMerges));
 	for (int i = 0; i < numDiffs; i++)
 	{
-		newMerges[i] = copy_byte_list(diffs[i]);
+		newMerges[i] = copy_byte_list((diffs[i]));
 	}
 
-	for (int stride = 2; stride < numDiffs; stride *= 2)
+	for (int stride = 1; stride < numDiffs; stride *= 2)
 	{
-		for (int i = stride / 2; i < numDiffs; i += stride)
+		for (int i = stride; i < numDiffs; i += stride * 2)
 		{
-			for (int j = 0; j < stride - 1 && i + j < numDiffs; j++)
+			for (int j = 0; j < stride && i + j < numDiffs; j++)
 			{
 				ByteList* prev = newMerges[i + j];
 				newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
@@ -111,11 +111,12 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 		}
 	}
 
-	OctreeNode** newTrees = malloc(numDiffs * sizeof(*newTrees));
-	for (int i = 0; i < numDiffs; i++)
+	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));
+	newTrees[0] = copy_octree(T0);
+	for (int i = 1; i <= numDiffs; i++)
 	{
-		newTrees[i] = reconstruct_from_diff(T0, newMerges[i]);
-		delete_byte_list(newMerges[i]);
+		newTrees[i] = reconstruct_from_diff(T0, newMerges[i - 1]);
+		delete_byte_list(newMerges[i - 1]);
 	}
 	free(newMerges);
 
