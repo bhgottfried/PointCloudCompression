@@ -21,5 +21,3 @@ val:
 
 gdb:
 	gdb --args ./serial -s 5 5 ../output/test.pcs ../input/rand2.pcd ../input/rand5.pcd ../input/rand3.pcd ../input/rand1000.pcd ../input/rand10.shift.pcd
-
-
