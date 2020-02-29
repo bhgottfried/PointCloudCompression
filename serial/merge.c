@@ -89,40 +89,35 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 }
 
 
-// Perform serial prefix-sum style joining of octree frames using initial tree and differences
+// Perform parallel prefix-sum algorithm serially to join octree frames using initial tree and differences
 OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned int numDiffs)
 {
-	int currNum = numDiffs;
-	ByteList** currMerges = malloc(currNum * sizeof(*currMerges));
-	for (int i = 0; i < currNum; i++)
+	ByteList** newMerges = malloc(numDiffs * sizeof(*newMerges));
+	for (int i = 0; i < numDiffs; i++)
 	{
-		currMerges[i] = copy_byte_list(diffs[i]);
+		newMerges[i] = copy_byte_list(diffs[i]);
 	}
 
-	while (currNum > 1)
+	for (int stride = 2; stride < numDiffs; stride *= 2)
 	{
-		int nextNum = currNum / 2 + currNum % 2;
-		ByteList** nextMerges = malloc(nextNum * sizeof(*nextMerges));
-		for (int i = 0; i < nextNum; i++)
+		for (int i = stride / 2; i < numDiffs; i += stride)
 		{
-			if (i < nextNum / 2)
+			for (int j = 0; j < stride - 1 && i + j < numDiffs; j++)
 			{
-				nextMerges[i] = merge_diff(currMerges[2 * i], currMerges[2 * i + 1]);
-			}
-			else	// If curr num is odd, there will be a loner to not get merged
-			{
-				nextMerges[i] = currMerges[currNum - 1];
+				ByteList* prev = newMerges[i + j];
+				newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
+				delete_byte_list(prev);
 			}
 		}
-
-		// Remove old diffs/merges that are no longer needed
-		for (int i = 0; i < currNum; i++)
-		{
-			delete_byte_list(currMerges[i]);
-		}
-		free(currMerges);
-		
-		currNum = nextNum;
-		currMerges = nextMerges;
 	}
+
+	OctreeNode** newTrees = malloc(numDiffs * sizeof(*newTrees));
+	for (int i = 0; i < numDiffs; i++)
+	{
+		newTrees[i] = reconstruct_from_diff(T0, newMerges[i]);
+		delete_byte_list(newMerges[i]);
+	}
+	free(newMerges);
+
+	return newTrees;
 }
