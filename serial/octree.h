@@ -79,7 +79,7 @@ OctreeNode* copy_octree(const OctreeNode* const tree);
 // Test functions
 void init_test(unsigned int _numDiffs, OctreeNode* T0);
 void test(OctreeNode* Ti, ByteList* Di, unsigned int i);
-void clean_up_test(void);
+void clean_up_test(int numCompleted);
 
 
 #endif

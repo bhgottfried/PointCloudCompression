@@ -80,8 +80,9 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 
 
 // Clean up static memory after testing is complete
-void clean_up_test(void)
+void clean_up_test(int numCompleted)
 {
+	numDiffs = numCompleted;
 	delete_octree(trees[0]);
 	delete_octree(trees[1]);
 	delete_byte_list(diffs[0]);
