@@ -154,8 +154,6 @@ int main(int argc, char* argv[])
 				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", diffIdx + 1);
 				delete_point_set(prevPtSet);
 				delete_octree(prevTree);
-				// delete_point_set(P0);
-				// delete_octree(T0);
 				clean_up_test(diffIdx);
 				fclose(fp);
 				return EXIT_FAILURE;
