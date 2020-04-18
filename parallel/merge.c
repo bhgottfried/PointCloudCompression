@@ -100,15 +100,17 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 
 	for (int stride = 1; stride < numDiffs; stride *= 2)
 	{
-		for (int i = stride; i < numDiffs; i += stride * 2)
+		cilk_for (int i = stride, j = 0; i + j < numDiffs; i += ++j == stride ? stride * 2 : 0, j %= stride)
 		{
-			for (int j = 0; j < stride && i + j < numDiffs; j++)
-			{
-				ByteList* prev = newMerges[i + j];
-				newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
-				delete_byte_list(prev);
-			}
+			ByteList* prev = newMerges[i + j];
+			newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
+			delete_byte_list(prev);
 		}
+
+		// Serial Equivalent:
+		// 	for (int i = stride; i < numDiffs; i += stride * 2)
+		// 		for (int j = 0; j < stride && i + j < numDiffs; j++)
+		// 			work();
 	}
 
 	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));
