@@ -23,3 +23,5 @@
 *.pcd
 *.pcdcmp
 *.pcs
+*./Dockerfile
+parallel/Dockerfile
