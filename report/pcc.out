@@ -1,0 +1,10 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Data Representation}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Octree Serialization}{}% 3
+\BOOKMARK [1][-]{section.3}{Stream Compression}{}% 4
+\BOOKMARK [2][-]{subsection.3.1}{Decompression}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{Parallel Optimizations}{}% 6
+\BOOKMARK [2][-]{subsection.4.1}{Parallel Compression}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.2}{Parallel Decompression}{section.4}% 8
+\BOOKMARK [1][-]{section.5}{Experimental Evaluation}{}% 9
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 10

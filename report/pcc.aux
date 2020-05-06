@@ -1,0 +1,75 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\@nameuse{bbl@beforestart}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\babel@aux{english}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\newlabel{sec:Introduction}{{1}{1}{Introduction}{section.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Data Representation}{1}{subsection.1.1}\protected@file@percent }
+\newlabel{sec:Data Representation}{{1.1}{1}{Data Representation}{subsection.1.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Create an octree by recursively inserting each point, creating nodes and setting bits as necessary\relax }}{2}{algorithm.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{alg:CreateOctree}{{1}{2}{Create an octree by recursively inserting each point, creating nodes and setting bits as necessary\relax }{algorithm.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Octree Serialization}{2}{section.2}\protected@file@percent }
+\newlabel{sec:Octree Serialization}{{2}{2}{Octree Serialization}{section.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Serialize an octree into a byte list\relax }}{2}{algorithm.2}\protected@file@percent }
+\newlabel{alg:Serialize}{{2}{2}{Serialize an octree into a byte list\relax }{algorithm.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Decode an octree from a byte list\relax }}{2}{algorithm.3}\protected@file@percent }
+\newlabel{alg:Deserialize}{{3}{2}{Decode an octree from a byte list\relax }{algorithm.3}{}}
+\citation{pcsc}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Stream Compression}{3}{section.3}\protected@file@percent }
+\newlabel{sec:Stream Compression}{{3}{3}{Stream Compression}{section.3}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces Calculate the symmetric difference between 2 octrees\relax }}{3}{algorithm.4}\protected@file@percent }
+\newlabel{alg:CalcSymDiff}{{4}{3}{Calculate the symmetric difference between 2 octrees\relax }{algorithm.4}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {5}{\ignorespaces Compress an incoming point cloud stream\relax }}{4}{algorithm.5}\protected@file@percent }
+\newlabel{alg:Stream Compression}{{5}{4}{Compress an incoming point cloud stream\relax }{algorithm.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Decompression}{4}{subsection.3.1}\protected@file@percent }
+\newlabel{sec:Decompression}{{3.1}{4}{Decompression}{subsection.3.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {6}{\ignorespaces Reconstruct an Octree given the previous octree and their symmetric difference\relax }}{4}{algorithm.6}\protected@file@percent }
+\newlabel{alg:Reconstruct}{{6}{4}{Reconstruct an Octree given the previous octree and their symmetric difference\relax }{algorithm.6}{}}
+\citation{trees}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Parallel Optimizations}{5}{section.4}\protected@file@percent }
+\newlabel{sec:Parallel Optimizations}{{4}{5}{Parallel Optimizations}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Parallel Compression}{5}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:Parallel Compression}{{4.1}{5}{Parallel Compression}{subsection.4.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces Create an octree in parallel by sorting and partitioning all points, setting data bits, then recursing\relax }}{5}{algorithm.7}\protected@file@percent }
+\newlabel{alg:ParCreateOctree}{{7}{5}{Create an octree in parallel by sorting and partitioning all points, setting data bits, then recursing\relax }{algorithm.7}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {8}{\ignorespaces Serialize an octree in parallel\relax }}{6}{algorithm.8}\protected@file@percent }
+\newlabel{alg:ParSerialize}{{8}{6}{Serialize an octree in parallel\relax }{algorithm.8}{}}
+\citation{prefix}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {9}{\ignorespaces Calculate the symmetric difference between 2 octrees in parallel\relax }}{7}{algorithm.9}\protected@file@percent }
+\newlabel{alg:ParSymDiff}{{9}{7}{Calculate the symmetric difference between 2 octrees in parallel\relax }{algorithm.9}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {10}{\ignorespaces Compress an incoming point cloud stream in parallel\relax }}{7}{algorithm.10}\protected@file@percent }
+\newlabel{alg:ParStreamCompress}{{10}{7}{Compress an incoming point cloud stream in parallel\relax }{algorithm.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Parallel Decompression}{7}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:Parallel Decompression}{{4.2}{7}{Parallel Decompression}{subsection.4.2}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {11}{\ignorespaces Merge two symmetric difference results\relax }}{7}{algorithm.11}\protected@file@percent }
+\newlabel{alg:Merge}{{11}{7}{Merge two symmetric difference results\relax }{algorithm.11}{}}
+\citation{cilk}
+\bibcite{prefix}{1}
+\bibcite{cilk}{2}
+\bibcite{trees}{3}
+\bibcite{pcsc}{4}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {12}{\ignorespaces Compute the parallel prefix sum over $D$ using the binary operator $+_M$\relax }}{8}{algorithm.12}\protected@file@percent }
+\newlabel{alg:PrefixMerge}{{12}{8}{Compute the parallel prefix sum over $D$ using the binary operator $+_M$\relax }{algorithm.12}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {13}{\ignorespaces Decompress a compressed octree stream in parallel using Prefix Merge\relax }}{8}{algorithm.13}\protected@file@percent }
+\newlabel{alg:ParDecomp}{{13}{8}{Decompress a compressed octree stream in parallel using Prefix Merge\relax }{algorithm.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experimental Evaluation}{8}{section.5}\protected@file@percent }
+\newlabel{sec:Experimental Evaluation}{{5}{8}{Experimental Evaluation}{section.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}\protected@file@percent }
+\newlabel{sec:Conclusion}{{6}{8}{Conclusion}{section.6}{}}
