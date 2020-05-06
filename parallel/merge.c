@@ -93,7 +93,7 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned int numDiffs)
 {
 	ByteList** newMerges = malloc(numDiffs * sizeof(*newMerges));
-	for (int i = 0; i < numDiffs; i++)
+	cilk_for (int i = 0; i < numDiffs; i++)
 	{
 		newMerges[i] = copy_byte_list((diffs[i]));
 	}
@@ -115,7 +115,7 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 
 	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));
 	newTrees[0] = copy_octree(T0);
-	for (int i = 1; i <= numDiffs; i++)
+	cilk_for (int i = 1; i <= numDiffs; i++)
 	{
 		newTrees[i] = reconstruct_from_diff(T0, newMerges[i - 1]);
 		delete_byte_list(newMerges[i - 1]);
