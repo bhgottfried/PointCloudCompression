@@ -6,14 +6,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <cilk/cilk.h>
+#include <omp.h>
 
 
 extern unsigned int TARGET_DEPTH;
 #define NUM_FIELDS 3
 #define FIELD_SIZE (sizeof(float))
-#define STREAM_PATH_0_IDX 4	// Index in argv that contains the path to the first tree in the stream
 #define OUTPUT_PATH_IDX 3
+#define DIR_ARG_IDX 4
+#define FILE_NAME_BUFF_SIZE 256
 
 
 typedef struct _Point
