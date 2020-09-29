@@ -51,34 +51,34 @@
 \posttitle{\end{center}} % Article title closing formatting
 \title{Point Cloud Compression Optimization} % Article title
 
-% I'm sorry for this...
-\author{
-\textline[t]{$\ $\textsc{Milind Kulkarni}}
-{\textsc{Benjamin Gottfried}\thanks{Ben Gottfried performed this work as an undergraduate at Purdue
-University. He is seeking admission to CS PhD programs, as well as internships for Summer 2021.}$\quad\ $}
-{\textsc{Kirshanthan Sundararajah}}\\[0.5ex]
-\textline[t]{\normalsize Purdue University, USA}
-{\normalsize Purdue University, USA$\quad\ $}
-{\normalsize Purdue University, USA$\qquad\ \ \  $}\\[-1ex]
-\textline[t]{$\ \ \,$\normalsize \href{mailto:milind@purdue.edu}{milind@purdue.edu}}
-{\normalsize \href{mailto:bg@purdue.edu}{bg@purdue.edu}$\quad\ $}
-{\normalsize \href{mailto:ksundar@purdue.edu}{ksundar@purdue.edu}$\qquad\quad\ \,$}
-}
-
+% % I'm sorry for this...
 % \author{
-% \textsc{Milind Kulkarni}\\[1ex]
-% \normalsize Purdue University, USA\\
-% \normalsize \href{mailto:milind@purdue.edu}{milind@purdue.edu}
-% \and
-% \textsc{Benjamin Gottfried}\thanks{Ben Gottfried performed this work as an undergraduate at Purdue
-% University. He is seeking admission to CS PhD programs, as well as internships for Summer 2021.}\\[1ex]
-% \normalsize Purdue University, USA\\
-% \normalsize \href{mailto:bg@purdue.edu}{bg@purdue.edu}
-% \and
-% \textsc{Kirshanthan Sundararajah}\\[1ex]
-% \normalsize Purdue University, USA\\
-% \normalsize \href{mailto:ksundar@purdue.edu}{ksundar@purdue.edu}
+% \textline[t]{$\ $\textsc{Milind Kulkarni}}
+% {\textsc{Benjamin Gottfried}\thanks{Ben Gottfried performed this work as an undergraduate at Purdue
+% University. He is seeking admission to CS PhD programs, as well as internships for Summer 2021.}$\quad\ $}
+% {\textsc{Kirshanthan Sundararajah}}\\[0.5ex]
+% \textline[t]{\normalsize Purdue University, USA}
+% {\normalsize Purdue University, USA$\quad\ $}
+% {\normalsize Purdue University, USA$\qquad\ \ \  $}\\[-1ex]
+% \textline[t]{$\ \ \,$\normalsize \href{mailto:milind@purdue.edu}{milind@purdue.edu}}
+% {\normalsize \href{mailto:bg@purdue.edu}{bg@purdue.edu}$\quad\ $}
+% {\normalsize \href{mailto:ksundar@purdue.edu}{ksundar@purdue.edu}$\qquad\quad\ \,$}
 % }
+
+\author{
+\textsc{Benjamin Gottfried}\thanks{Ben Gottfried performed this work as an undergraduate at Purdue
+University. He is seeking admission to CS PhD programs, as well as internships for Summer 2021.}\\[1ex]
+\normalsize Purdue University, USA\\
+\normalsize \href{mailto:bg@purdue.edu}{bg@purdue.edu}
+\and
+\textsc{Kirshanthan Sundararajah}\\[1ex]
+\normalsize Purdue University, USA\\
+\normalsize \href{mailto:ksundar@purdue.edu}{ksundar@purdue.edu}
+\and
+\textsc{Milind Kulkarni}\\[1ex]
+\normalsize Purdue University, USA\\
+\normalsize \href{mailto:milind@purdue.edu}{milind@purdue.edu}
+}
 
 \date{} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
@@ -543,7 +543,7 @@ maintaining the streaming capabilities of our compression algorithm. Consequentl
 compression procedure is identical to that presented in \textbf{Algorithm \ref{alg:Stream Compression}},
 but we can take advantage of our additional threads to further optimize the subroutines utilized.
 
-The first potential optimization I would like to explore is constructing the octree in parallel. I argue
+The first potential optimization we would like to explore is constructing the octree in parallel. I argue
 this is possible by first stably sorting all points in $x,y,$ then $z$ order, partitioning them into each
 subvoxel of the root in constant time, setting the data bit for subvoxel with at least one point, then
 recursing. Each thread would be responsible for performing the same task on exactly one subvoxel, so
@@ -886,23 +886,24 @@ Therefore, our complete stream decompression algorithm is the following:
 
 \section{Experimental Evaluation} \label{sec:Experimental Evaluation}
 
-This will be completed once I nail down the cilk \cite{cilk} and CUDA implementations this summer to
-compare benchmarks to my serial elision...
+The current status of the implementation of these algorithms is as follows: The serial
+elision is fully functional and tested, which implies the essential correctness of the
+algorithms, and also establishes a benchmark that can be used to show the efficiency of 
+the parallel versions. This will be shown further after the cilk \cite{cilk} and CUDA
+implementations are completed.
 
 %----------------------------------------------------------------------------------------
 
 \section{Conclusion} \label{sec:Conclusion}
 
-Parallel execution runs faster than serial. More details to follow after the experimental evaluation
-is completed.
+The efficiency of our parallel algorithms are theoretically more efficient than their
+serial counterparts. More details will follow after the experimental evaluation is completed.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
 %----------------------------------------------------------------------------------------
 
 \begin{thebibliography}{15}
-
-% These will also be completed once I learn how to properly cite things in LaTeX...
 
 \bibitem{prefix}
 Blelloch, Guy E. “Programming Parallel Algorithms.”
