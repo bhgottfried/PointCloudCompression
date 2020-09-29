@@ -93,14 +93,17 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned int numDiffs)
 {
 	ByteList** newMerges = malloc(numDiffs * sizeof(*newMerges));
-	cilk_for (int i = 0; i < numDiffs; i++)
+
+	#pragma omp parallel for
+	for (int i = 0; i < numDiffs; i++)
 	{
 		newMerges[i] = copy_byte_list((diffs[i]));
 	}
 
 	for (int stride = 1; stride < numDiffs; stride *= 2)
 	{
-		cilk_for (int i = stride, j = 0; i + j < numDiffs; i += ++j == stride ? stride * 2 : 0, j %= stride)
+		#pragma omp parallel for
+		for (int i = stride, j = 0; i + j < numDiffs; i += ++j == stride ? stride * 2 : 0, j %= stride)
 		{
 			ByteList* prev = newMerges[i + j];
 			newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
@@ -115,7 +118,9 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 
 	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));
 	newTrees[0] = copy_octree(T0);
-	cilk_for (int i = 1; i <= numDiffs; i++)
+
+	#pragma omp parallel for
+	for (int i = 1; i <= numDiffs; i++)
 	{
 		newTrees[i] = reconstruct_from_diff(T0, newMerges[i - 1]);
 		delete_byte_list(newMerges[i - 1]);
