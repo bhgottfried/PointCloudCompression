@@ -1,22 +1,26 @@
 #include "octree.h"
+#include <dirent.h>
 
 
 unsigned int TARGET_DEPTH = 0;
 
 
 // Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]
-// Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]
+// Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]
 int main(int argc, char* argv[])
 {
 	if (argc < 4)
 	{
 		printf("Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]\n");
-		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]\n");
 		return EXIT_FAILURE; 
 	}
 
 	// Parse mode flag (single or stream)
 	bool isStream;
+	char fileName[FILE_NAME_BUFF_SIZE] = "";
+	DIR* d;
+
 	unsigned int numClouds = 1;
 	if (!strcmp(argv[1], "-c"))
 	{
@@ -31,11 +35,18 @@ int main(int argc, char* argv[])
 			printf("Number of clouds must be a positive integer.\n");
 			return EXIT_FAILURE;
 		}
+
+		// Open the directory of files to compress and skip the ./ and ../ directories
+		d = opendir(argv[DIR_ARG_IDX]);
+		readdir(d);
+		readdir(d);
+		strcpy(fileName, argv[DIR_ARG_IDX]);
+		strcat(fileName, readdir(d)->d_name);
 	}
 	else
 	{
 		printf("Call syntax: ./serial [-c for a single cloud] [target depth] [relative path to .pcd binary file to compress]\n");
-		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		printf("Call syntax: ./serial [-s for stream] [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]\n");
 		return EXIT_FAILURE;
 	}
 
@@ -48,7 +59,7 @@ int main(int argc, char* argv[])
 	}
 	
 	// Parse .pcd data and create set of points for inital cloud
-	PointSet* P0 = get_point_set(argv[isStream ? STREAM_PATH_0_IDX : SINGLE_PATH_IDX]);
+	PointSet* P0 = get_point_set(isStream ? fileName : argv[SINGLE_PATH_IDX]);
 	if (!P0)
 	{
 		return EXIT_FAILURE;
@@ -120,7 +131,7 @@ int main(int argc, char* argv[])
 	else
 	{
 		// Write header to output stream and validate file pointer
-		FILE* fp = write_stream_header(argv[4], numClouds);
+		FILE* fp = write_stream_header(argv[OUTPUT_PATH_IDX], numClouds);
 		if (!fp)
 		{
 			delete_point_set(P0);
@@ -148,7 +159,9 @@ int main(int argc, char* argv[])
 		for (unsigned int diffIdx = 0; diffIdx < numDiffs; diffIdx++)
 		{
 			// Parse next point data and create octree
-			currPtSet = get_point_set(argv[STREAM_PATH_0_IDX + diffIdx + 1]);
+			strcpy(fileName, argv[DIR_ARG_IDX]);
+			strcat(fileName, readdir(d)->d_name);
+			currPtSet = get_point_set(fileName);
 			if (!currPtSet)
 			{
 				printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", diffIdx + 1);
@@ -186,6 +199,7 @@ int main(int argc, char* argv[])
 		delete_point_set(prevPtSet);
 		delete_octree(prevTree);
 		fclose(fp);
+		closedir(d);
 	}
 
 	// Clean up dynamicaly allocated memory for testing

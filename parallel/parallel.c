@@ -1,29 +1,38 @@
 #include "octree.h"
+#include <dirent.h>
 
 
 unsigned int TARGET_DEPTH = 0;
 
 
-// Call syntax: ./parallel [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]
+// Call syntax: ./parallel [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]
 int main(int argc, char* argv[])
 {
-	if (argc < 6)
+	if (argc != 5)
 	{
-		printf("Call syntax: ./parallel [target depth] [num point clouds in stream] [path to compressed stream output] [paths to files to compress]\n");
+		printf("Call syntax: ./parallel [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]\n");
 		return EXIT_FAILURE; 
 	}
 
 	// Parse number of clouds and target depth
-	TARGET_DEPTH = (unsigned int) atoi(argv[2]);
-	unsigned int numClouds = (unsigned int) atoi(argv[3]);
+	TARGET_DEPTH = (unsigned int) atoi(argv[1]);
+	unsigned int numClouds = (unsigned int) atoi(argv[2]);
 	if (numClouds == 0 || TARGET_DEPTH == 0)
 	{
 		printf("Depth and number of clouds must be a positive integer.\n");
 		return EXIT_FAILURE;
 	}
+
+	// Open the directory of files to compress and skip the ./ and ../ directories
+	DIR* d = opendir(argv[DIR_ARG_IDX]);
+	readdir(d);
+	readdir(d);
 	
 	// Parse .pcd data and create set of points for inital cloud
-	PointSet* P0 = get_point_set(argv[STREAM_PATH_0_IDX]);
+	char fileName[FILE_NAME_BUFF_SIZE] = "";
+	strcpy(fileName, argv[DIR_ARG_IDX]);
+	strcat(fileName, readdir(d)->d_name);
+	PointSet* P0 = get_point_set(fileName);
 	if (!P0)
 	{
 		return EXIT_FAILURE;
@@ -70,7 +79,9 @@ int main(int argc, char* argv[])
 	for (unsigned int diffIdx = 0; diffIdx < numDiffs; diffIdx++)
 	{
 		// Parse next point data and create octree
-		currPtSet = get_point_set(argv[STREAM_PATH_0_IDX + diffIdx + 1]);
+		strcpy(fileName, argv[DIR_ARG_IDX]);
+		strcat(fileName, readdir(d)->d_name);
+		currPtSet = get_point_set(fileName);
 		if (!currPtSet)
 		{
 			printf("Invalid .pcd index (Initial .pcd = 0): %u.\n", diffIdx + 1);
@@ -108,6 +119,7 @@ int main(int argc, char* argv[])
 	delete_point_set(prevPtSet);
 	delete_octree(prevTree);
 	fclose(fp);
+	closedir(d);
 
 	// Clean up dynamicaly allocated memory for testing
 	clean_up_test(numClouds - 1);
