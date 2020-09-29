@@ -1,5 +1,5 @@
 #include "octree.h"
-
+#include <time.h>
 
 // Static memory to be initialized at program start and deallocated after test is complete
 static unsigned int numDiffs;
@@ -55,7 +55,12 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	delete_octree(testTree);
 
 	// Test construction of prefix merge
+	clock_t start = clock();
 	OctreeNode** mergedTrees = prefix_merge(trees[0], diffs, i + 1);
+	clock_t end = clock();
+	double time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("Parallel prefix merge time: %.3lfs\n", time);
+
 	for (int j = 0; j <= i + 1; j++)
 	{
 		if (are_equal(mergedTrees[j], trees[j]))
