@@ -6,7 +6,7 @@ from operator import itemgetter
 
 # Parse args
 if len(sys.argv) < 3:
-	print("usage: python3 pcd_gen.py <number of points to shift> <.pcd file to shift>")
+	print("usage: python3 pcd_shift.py <number of points to shift> <.pcd file to shift> <output location>")
 	exit()
 
 # Read data
@@ -26,7 +26,7 @@ for i in range(shiftSlice, shiftSlice + int(sys.argv[1])):
         points[i][j] += (random.random() / 2 - 0.25) * points[i][j]
 
 # Write header and shifted data to new .pcd file
-with open(sys.argv[2].replace(".pcd", ".shift.pcd"), "wb") as outFile:
+with open(sys.argv[3], "wb") as outFile:
     outFile.writelines(header)
     for point in points:
         outFile.write(struct.pack("3f", *point))

@@ -3,12 +3,12 @@ from random import random
 from array import array
 
 if len(sys.argv) < 2:
-	print("usage: python3 pcd_gen.py <number of points>")
+	print("usage: python3 pcd_gen.py <number of points> <output location>")
 	exit()
 
 numPoints = int(sys.argv[1])
 
-with open("rand{0}.pcd".format(numPoints), "wb") as outFile:
+with open(sys.argv[2], "wb") as outFile:
 	outFile.write(("VERSION .7\n"
 				+ "FIELDS x y z\n"
 				+ "SIZE 4 4 4\n"
