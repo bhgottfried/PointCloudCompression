@@ -13,7 +13,7 @@ PointSet* get_point_set(const char* const fileName)
 	FILE* fp = fopen(fileName, "rb");
 	if (!fp)
 	{
-		printf("Failed to open file.\n");
+		printf("Failed to open file: %s\n", fileName);
 		return NULL;
 	}
 
