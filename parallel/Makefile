@@ -4,10 +4,10 @@ SRC_H = octree.h queue.h
 all: debug
 
 debug: $(SRC_C) $(SRC_H)
-	gcc -g $(SRC_C) $(SRC_H) -o parallel
+	gcc -g -fopenmp $(SRC_C) $(SRC_H) -o parallel
 	
 opt: $(SRC_C) $(SRC_H)
-	gcc -O3 $(SRC_C) $(SRC_H) -o parallel
+	gcc -O2 -fopenmp $(SRC_C) $(SRC_H) -o parallel
 
 %.o: %.c
 	gcc -c $<
@@ -16,10 +16,10 @@ clean:
 	rm parallel
 	
 run:
-	./parallel 8 1000 ../output/test.pcs ../input/clouds/
+	./parallel 8 385 ../output/parallel.pcs ../input/clouds/ | grep time
 
 val:
-	valgrind ./parallel 8 1000 ../output/test.pcs ../input/clouds/
+	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all ./parallel 6 27 ../output/test.pcs ../input/clouds/
 
 gdb:
-	gdb --args ./parallel 8 1000 ../output/test.pcs ../input/clouds/
+	gdb --args ./parallel 2 4 ../output/test.pcs ../input/clouds/

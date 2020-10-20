@@ -16,6 +16,9 @@ extern unsigned int TARGET_DEPTH;
 #define DIR_ARG_IDX 4
 #define FILE_NAME_BUFF_SIZE 256
 
+#define min(a,b) (a < b ? a : b)
+#define max(a,b) (a > b ? a : b)
+
 
 typedef struct _Point
 {

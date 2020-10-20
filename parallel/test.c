@@ -1,5 +1,4 @@
 #include "octree.h"
-#include <time.h>
 
 // Static memory to be initialized at program start and deallocated after test is complete
 static unsigned int numDiffs;
@@ -23,10 +22,15 @@ void init_test(unsigned int _numDiffs, OctreeNode* T0)
 // Test that the reconstruction from diff, merge, and prefix merge match the current tree
 void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 {
-	printf("Testing for first %d trees:\n", i + 2);
 	trees[i + 1] = Ti;
 	diffs[i] = Di;
 
+	// Benchmarking only -- also causes the merge diff test that runs to fail because
+	// it relies on previous diffs that don't get run
+	if (i < numDiffs - 1) return;
+
+	printf("Testing for first %d trees:\n", i + 2);
+	
 	// Construct current tree from previous tree plus diff
 	OctreeNode* testTree = reconstruct_from_diff(trees[i], diffs[i]);
 	if (are_equal(testTree, Ti))
@@ -55,12 +59,7 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	delete_octree(testTree);
 
 	// Test construction of prefix merge
-	clock_t start = clock();
 	OctreeNode** mergedTrees = prefix_merge(trees[0], diffs, i + 1);
-	clock_t end = clock();
-	double time = ((double) (end - start)) / CLOCKS_PER_SEC;
-	printf("Parallel prefix merge time: %.3lfs\n", time);
-
 	for (int j = 0; j <= i + 1; j++)
 	{
 		if (are_equal(mergedTrees[j], trees[j]))

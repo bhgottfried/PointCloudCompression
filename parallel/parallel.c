@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	if (argc != 5)
 	{
 		printf("Call syntax: ./parallel [target depth] [num point clouds in stream] [path to compressed stream output] [path to directory of files to compress]\n");
-		return EXIT_FAILURE; 
+		return EXIT_FAILURE;
 	}
 
 	// Parse number of clouds and target depth
