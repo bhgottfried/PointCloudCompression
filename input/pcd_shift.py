@@ -22,8 +22,8 @@ points.sort(key = itemgetter(0,1,2))
 shiftSlice = random.randint(0, int(len(points) - 1 - int(sys.argv[1])))
 for i in range(shiftSlice, shiftSlice + int(sys.argv[1])):
     for j in range(3):
-        # Shift each coordinate by a random amount [-0.25x, 0.25x]
-        points[i][j] += (random.random() / 2 - 0.25) * points[i][j]
+        # Shift each coordinate by a random amount within plus/minus 5%
+        points[i][j] += (random.random() / 10 - 0.05) * points[i][j]
 
 # Write header and shifted data to new .pcd file
 with open(sys.argv[3], "wb") as outFile:

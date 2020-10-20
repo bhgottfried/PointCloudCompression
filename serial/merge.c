@@ -1,10 +1,11 @@
 #include "octree.h"
+#include <time.h>
 
 
 // Merge two diff lists to get the difference from Ti to Tk
 ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 {
-	if (!Dij || ! Djk)
+	if (!Dij || !Djk)
 	{
 		printf("Invalid arguments to merge_diff.\n");
 		return NULL;
@@ -98,17 +99,25 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 		newMerges[i] = copy_byte_list((diffs[i]));
 	}
 
-	for (int stride = 1; stride < numDiffs; stride *= 2)
-	{
-		for (int i = stride; i < numDiffs; i += stride * 2)
-		{
-			for (int j = 0; j < stride && i + j < numDiffs; j++)
-			{
-				ByteList* prev = newMerges[i + j];
-				newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
-				delete_byte_list(prev);
-			}
-		}
+	// for (int stride = 1; stride < numDiffs; stride *= 2)
+	// {
+	// 	for (int i = stride; i < numDiffs; i += stride * 2)
+	// 	{
+	// 		for (int j = 0; j < stride && i + j < numDiffs; j++)
+	// 		{
+	// 			ByteList* prev = newMerges[i + j];
+	// 			newMerges[i + j] = merge_diff(newMerges[i - 1], newMerges[i + j]);
+	// 			delete_byte_list(prev);
+	// 		}
+	// 	}
+	// }
+	
+	clock_t start = clock();
+	
+	for (int i = 1; i < numDiffs; i++) {
+		ByteList* prev = newMerges[i];
+		newMerges[i] = merge_diff(newMerges[i - 1], newMerges[i]);
+		delete_byte_list(prev);
 	}
 
 	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));
@@ -116,6 +125,14 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 	for (int i = 1; i <= numDiffs; i++)
 	{
 		newTrees[i] = reconstruct_from_diff(T0, newMerges[i - 1]);
+	}
+
+	clock_t end = clock();
+	double time = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("Serial prefix merge time for %d diffs: %.3lfs\n", numDiffs, time);
+
+	for (int i = 1; i <= numDiffs; i++)
+	{
 		delete_byte_list(newMerges[i - 1]);
 	}
 	free(newMerges);
