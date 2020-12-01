@@ -119,6 +119,8 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 		#pragma omp single
 		{
 			numThreads = omp_get_num_threads();
+			numThreads = 1;
+			omp_set_num_threads(1);
 			if (numThreads > numDiffs)
 			{
 				omp_set_num_threads(numDiffs);

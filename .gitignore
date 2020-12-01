@@ -25,3 +25,4 @@
 *.pcs
 *./Dockerfile
 parallel/Dockerfile
+input/clouds/
