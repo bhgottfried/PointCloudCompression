@@ -113,11 +113,18 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 	// }
 	
 	clock_t start = clock();
+	clock_t last = start;
 	
-	for (int i = 1; i < numDiffs; i++) {
+	for (int i = 1; i < numDiffs; i++)
+	{
 		ByteList* prev = newMerges[i];
 		newMerges[i] = merge_diff(newMerges[i - 1], newMerges[i]);
 		delete_byte_list(prev);
+
+		// // Timing check
+		// clock_t next = clock();
+		// printf("%lf\n", (double) (next - last) / CLOCKS_PER_SEC);
+		// last = next;
 	}
 
 	OctreeNode** newTrees = malloc((numDiffs + 1)* sizeof(*newTrees));

@@ -90,6 +90,15 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 }
 
 
+// Thread timing struct
+typedef struct _ThreadTimer
+{
+	double seq1;
+	double merge[16];
+	double seq2;
+} ThreadTimer;
+
+
 // Let n be the number of diffs to merge and let c be the number of processor cores.
 // 1. Divide the array of diffs into c subarrays. Each core (simultaneously) sequentially merges n/c diffs.
 //		(aside: if n < c then set c = n. If c does not divide n, then the cores with id < n mod c does 1 more diff than the others)
@@ -105,6 +114,10 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 	int numThreads, busyOffset;
 	int i, work, tid;
 
+	// Temporary timing debugging variables
+	ThreadTimer threadTimer, programTimer;
+	int levelIdx = 0;
+
 	ByteList** newMerges = malloc(numDiffs * sizeof(*newMerges));
 	#pragma omp parallel for
 	for (i = 0; i < numDiffs; i++)
@@ -112,32 +125,27 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 		newMerges[i] = copy_byte_list(diffs[i]);
 	}
 
+	// Clock variables
 	double start = omp_get_wtime();
-	
-	#pragma omp parallel default(none) private(i, tid, prev, work) shared(newMerges, partial, numThreads, numDiffs, busyOffset)
+	double end, prevTime, currTime;
+	// #pragma omp parallel default(none) private(i, tid, prev, work) shared(newMerges, partial, numThreads, numDiffs, busyOffset)
+	#pragma omp parallel default(none) private(i, tid, prev, work, threadTimer) shared(newMerges, partial, numThreads, numDiffs, busyOffset, programTimer, levelIdx, start, end, prevTime, currTime)
 	{
 		#pragma omp single
 		{
 			numThreads = omp_get_num_threads();
-			numThreads = 1;
-			omp_set_num_threads(1);
-			if (numThreads > numDiffs)
-			{
-				omp_set_num_threads(numDiffs);
-				numThreads = numDiffs;
-			}
 			partial = malloc(sizeof(*partial) * numThreads);
 			busyOffset =  numDiffs % numThreads;
-
-			// printf("numDiffs = %d\n", numDiffs);
-			// printf("numThreads = %d\n", numThreads);
-			// printf("busyOffset = %d\n", busyOffset);
 		}
 
 		tid = omp_get_thread_num();
 		work = numDiffs / numThreads + (busyOffset > tid ? 1 : 0);
 
-		// printf("TID %d: work = %d\n", tid, work);
+		// Timing for thread0 sequential merge 1
+		if (!tid)
+		{
+			prevTime = omp_get_wtime();
+		}
 
 		// Compute the prefix sums for each thread until there are numThreads subarrays to merge
 		for (i = work * tid + 1 + (tid < busyOffset ? 0 : busyOffset); i < work * tid + work + (tid < busyOffset ? 0 : busyOffset) && i < numDiffs; i++)
@@ -147,6 +155,13 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 			prev = newMerges[i];
 			newMerges[i] = merge_diff(newMerges[i - 1], newMerges[i]);
 			delete_byte_list(prev);
+
+			if (!tid)
+			{
+				currTime = omp_get_wtime();
+				printf("Thread0 seq1 merge time: %lf\n", currTime - prevTime);
+				prevTime = currTime;
+			}
 		}
 
 		if (i - 1 < numDiffs)
@@ -154,8 +169,15 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 			// printf("TID %d: partial = %d\n", tid, i - 1);
 			partial[tid] = copy_byte_list(newMerges[i - 1]);
 		}
+
+		threadTimer.seq1 = omp_get_wtime() - start;
 		
 		#pragma omp barrier
+
+		#pragma omp single
+		{
+			programTimer.seq1 = omp_get_wtime() - start;
+		}
 		
 		// Calculate prefix merge for the array that was made from last elements of each of the previous sub-arrays
 		for (i = 1; i < numThreads; i <<= 1)
@@ -168,10 +190,27 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 				partial[tid] = merge_diff(partial[(tid / i) * i - 1], partial[tid]);
 				delete_byte_list(prev);
 			}
+
+			threadTimer.merge[levelIdx] = omp_get_wtime() - start;	// (levelIdx ? programTimer.merge[levelIdx - 1] : programTimer.seq1);
+
 			#pragma omp barrier
+
+			#pragma omp single
+			{
+				programTimer.merge[levelIdx] = omp_get_wtime() - start; // (levelIdx ? programTimer.merge[levelIdx - 1] : programTimer.seq1);
+				levelIdx++;
+				// printf("Moving to level %d\n", levelIdx);
+			}
+		}
+
+		// Timing for thread0 sequential merge 2
+		if (!tid)
+		{
+			prevTime = omp_get_wtime();
 		}
 
 		// Update each original thread's subarray
+
 		for (i = work * tid + (tid < busyOffset ? 0 : busyOffset); i < min(work * tid + work + (tid < busyOffset ? 0 : busyOffset), numDiffs); i++)
 		{
 			// printf("TID %d: Seq merge for i = %d with partial\n", tid, i);
@@ -179,7 +218,42 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 			prev = newMerges[i];
 			newMerges[i] = merge_diff(newMerges[i], partial[tid]);
 			delete_byte_list(prev);
+
+			if (!tid)
+			{
+				currTime = omp_get_wtime();
+				printf("Thread0 seq2 merge time: %lf\n", currTime - prevTime);
+				prevTime = currTime;
+			}
 		}
+
+		threadTimer.seq2 = omp_get_wtime() - start; // programTimer.merge[levelIdx - 1];
+		
+		#pragma omp barrier
+
+		#pragma omp single
+		{
+			programTimer.seq2 = omp_get_wtime() - start; // programTimer.merge[levelIdx - 1];
+		}
+
+		#pragma omp single
+		{
+			end = omp_get_wtime();
+		}
+
+		// Timing check
+		if (tid < numDiffs)
+		{
+			printf("TID %d: seq1 = %lf, \t merge0 = %lf, \t merge1 = %lf, \t merge2 = %lf, \t seq2 = %lf\n", tid, threadTimer.seq1, threadTimer.merge[0], threadTimer.merge[1], threadTimer.merge[2], threadTimer.seq2);
+		}
+
+		#pragma omp barrier
+
+		#pragma omp single
+		{
+			printf("\nTotal: seq1 = %lf, \t merge0 = %lf, \t merge1 = %lf, \t merge2 = %lf, \t seq2 = %lf\n\n", programTimer.seq1, programTimer.merge[0], programTimer.merge[1], programTimer.merge[2], programTimer.seq2);
+		}
+
 	}
 
 	OctreeNode** newTrees = malloc((numDiffs + 1) * sizeof(*newTrees));
@@ -191,10 +265,9 @@ OctreeNode** prefix_merge(const OctreeNode* const T0, ByteList** diffs, unsigned
 		newTrees[i] = reconstruct_from_diff(T0, newMerges[i - 1]);
 	}
 
-	double end = omp_get_wtime();
 	printf("Parallel prefix merge time for %d diffs: %.3lfs\n", numDiffs, end - start);
 
-	for (i = 0; i < numThreads; i++)
+	for (i = 0; i < min(numDiffs, numThreads); i++)
 	{
 		delete_byte_list(partial[i]);
 	}

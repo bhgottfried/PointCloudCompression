@@ -16,10 +16,10 @@ clean:
 	rm parallel
 	
 run:
-	./parallel 8 385 ../output/parallel.pcs ../input/clouds/ | grep time
+	./parallel 8 193 ../output/parallel.pcs ../input/clouds/ #| grep time
 
 val:
-	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all ./parallel 6 27 ../output/test.pcs ../input/clouds/
+	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all ./parallel 4 9 ../output/test.pcs ../input/clouds/
 
 gdb:
-	gdb --args ./parallel 2 4 ../output/test.pcs ../input/clouds/
+	gdb --args ./parallel 8 9 ../output/test.pcs ../input/clouds/

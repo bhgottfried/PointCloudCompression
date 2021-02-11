@@ -59,18 +59,20 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	delete_octree(testTree);
 
 	// Test construction of prefix merge
+	bool prefixFail = false;
 	OctreeNode** mergedTrees = prefix_merge(trees[0], diffs, i + 1);
 	for (int j = 0; j <= i + 1; j++)
 	{
-		if (are_equal(mergedTrees[j], trees[j]))
-		{
-			printf("Prefix merge tree %d success!\n", j);
-		}
-		else
+		if (!are_equal(mergedTrees[j], trees[j]))
 		{
 			printf("Prefix merge tree %d failure...\n", j);
+			prefixFail = true;
 			break;
 		}
+	}
+	if (!prefixFail)
+	{
+		printf("Prefix merge success!\n");
 	}
 
 	// Remove memory for prefix merged trees
