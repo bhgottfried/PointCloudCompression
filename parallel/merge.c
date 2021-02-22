@@ -28,6 +28,8 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 	mergedLink->data = currOld->data ^ currNew->data;
 	mergedLink->next = NULL;
 	sum->tail = mergedLink;
+
+	int cnt = 0;
 	
 	while (dataOld && dataNew && currOld && currNew)
 	{
@@ -37,6 +39,8 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 			// Interleave diff bytes for existing diff bytes for this subvoxel
 			if (oByte & (1 << bitIdx))
 			{
+				cnt++;
+
 				unsigned char xByte = 0;
 				if ((currOld->data & (1 << bitIdx)) && dataOld)
 				{
@@ -67,6 +71,8 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 	// Append any remaining bytes that do not need to be interleaved
 	while (dataOld)
 	{
+		cnt++;
+
 		mergedLink->next = malloc(sizeof(*mergedLink));
 		mergedLink = mergedLink->next;
 		mergedLink->data = dataOld->data;
@@ -77,6 +83,8 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 	}
 	while (dataNew)
 	{
+		cnt++;
+
 		mergedLink->next = malloc(sizeof(*mergedLink));
 		mergedLink = mergedLink->next;
 		mergedLink->data = dataNew->data;
@@ -85,6 +93,8 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 		sum->tail = mergedLink;
 		sum->numBytes++;
 	}
+
+	printf("cnt = %d\n", cnt);
 
 	return sum;
 }
