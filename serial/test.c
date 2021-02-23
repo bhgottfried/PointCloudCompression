@@ -15,6 +15,14 @@ void init_test(unsigned int _numDiffs, OctreeNode* T0)
 	diffs = malloc(numDiffs * sizeof(*diffs));
 	merges = malloc(numDiffs * sizeof(*merges));
 	trees[0] = T0;
+
+	for (int i = 0; i < numDiffs; i++)
+	{
+		trees[i + 1] = NULL;
+		diffs[i]	 = NULL;
+		merges[i]	 = NULL;
+	}
+
 	printf("\n");
 }
 
