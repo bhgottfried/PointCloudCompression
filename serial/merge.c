@@ -11,6 +11,9 @@ ByteList* merge_diff(const ByteList* const Dij, const ByteList* const Djk)
 		return NULL;
 	}
 
+	printf("Dij len = %d\n", Dij->numBytes);
+	printf("Djk len = %d\n", Djk->numBytes);
+
 	// Initialize resulting, merged list
 	ByteList* sum = malloc(sizeof(*sum));
 	sum->head = malloc(sizeof(*sum->head));

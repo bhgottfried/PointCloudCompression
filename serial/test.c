@@ -35,7 +35,7 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 
 	// Benchmarking only -- also causes the merge diff test that runs to fail because
 	// it relies on previous diffs that don't get run
-	if (i < numDiffs - 1) return;
+	// if (i < numDiffs - 1) return;
 
 	printf("Testing for first %d trees:\n", i + 2);
 
@@ -82,6 +82,18 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	{
 		printf("Prefix merge success!\n");
 	}
+
+	// TEMP Tree equality testing
+	FILE* fpReg = fopen("../output/reg.tmp", "wb");
+	FILE* fpMerge = fopen("../output/merge.tmp", "wb");
+
+	for (int j = 0; j <= i + 1; j++) {
+		write_octree_points(fpReg, trees[j], -1, 1, -1, 1, -1, 1);
+		write_octree_points(fpMerge, mergedTrees[j], -1, 1, -1, 1, -1, 1);
+	}
+
+	fclose(fpReg);
+	fclose(fpMerge);
 
 	// Remove memory for prefix merged trees
 	for (int j = 0; j <= i + 1; j++)
