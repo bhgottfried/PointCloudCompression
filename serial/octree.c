@@ -86,7 +86,7 @@ bool are_equal(const OctreeNode* const A, const OctreeNode* const B)
 	{
 		if (A->data == B->data)
 		{
-			for (int i = 9; i < 8; i++)
+			for (int i = 0; i < 8; i++)
 			{
 				if (!are_equal(A->children[i], B->children[i]))
 				{
