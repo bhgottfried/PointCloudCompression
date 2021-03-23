@@ -60,6 +60,7 @@ PointSet* get_point_set(const char* const fileName);
 OctreeNode* init_node(bool isLeaf);
 OctreeNode* create_octree(const PointSet* const ptSet);
 bool are_equal(const OctreeNode* const t1, const OctreeNode* const t2);
+void print_trees(const OctreeNode* norm, const OctreeNode* reco);
 // Compression functions
 ByteList* serialize(const OctreeNode* const root);
 OctreeNode* decompress(FILE* const inFilePtr, float* fieldMins, float* fieldMaxs, int* numNodes);

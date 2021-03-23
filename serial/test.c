@@ -48,6 +48,7 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	else
 	{
 		printf("reconstruct_from_diff %d failure...\n", i + 1);
+		print_trees(Ti, testTree);
 	}
 	delete_octree(testTree);
 
@@ -63,6 +64,7 @@ void test(OctreeNode* Ti, ByteList* Di, unsigned int i)
 	else
 	{
 		printf("merge_diff %d failure...\n", i + 1);
+		print_trees(Ti, testTree);
 	}
 	delete_octree(testTree);
 

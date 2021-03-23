@@ -1,4 +1,5 @@
 #include "octree.h"
+#include "queue.h"
 
 
 // Create a new octree node for a point object.
@@ -104,4 +105,59 @@ bool are_equal(const OctreeNode* const A, const OctreeNode* const B)
 	{
 		return !A == !B;
 	}
+}
+
+
+// Print the BFS for two trees
+void print_trees(const OctreeNode* norm, const OctreeNode* reco)
+{
+	Queue* Q = init_queue();
+	enqueue(Q, norm);
+	enqueue(Q, reco);
+
+	printf("  norm     reco  \n");
+	printf("_________________\n");
+
+	// Simultaneous breadth first traversal of both trees, appending difference byte for each visited node
+	while (!is_empty(Q))
+	{
+		norm = dequeue(Q);
+		reco = dequeue(Q);
+
+		if (norm->isLeaf)
+		{
+			if (!reco->isLeaf)
+				printf("reco missing leaf!\n");
+			else
+				printf("leaf    \tleaf\n");
+		}
+		else
+		{
+			for (int i = 0; i < 8; i++)
+				printf("%d", norm->data & (1 << i) ? 1 : 0);
+			printf(" ");
+			for (int i = 0; i < 8; i++)
+				printf("%d", reco->data & (1 << i) ? 1 : 0);
+
+			if (norm->data != reco->data)
+			{
+				printf(" <-- Data mis-match!\n");
+			}
+			else
+			{
+				printf("\n");
+				for (int i = 0; i < 8; i++)
+				{
+					if ((norm->data & (1 << i)) || (reco->data & (1 << i)))
+					{
+						enqueue(Q, norm->children[i]);
+						enqueue(Q, reco->children[i]);
+					}
+				}
+			}
+		}
+	}
+	
+	printf("\n");
+	delete_queue(Q);
 }
