@@ -121,7 +121,7 @@ OctreeNode* reconstruct_from_diff(const OctreeNode* const prevTree, const ByteLi
 				// If the previous tree had a child here, but there is not in the new tree
 				if ((link->data & (1 << childIdx)) && currPrev && (currPrev->data & (1 << childIdx)))
 				{
-					if (currDepth < TARGET_DEPTH - 1)
+					if (currDepth < TARGET_DEPTH)
 					{
 						enqueue(Qprev, currPrev->children[childIdx]);
 						enqueue(Qnew, NULL);
