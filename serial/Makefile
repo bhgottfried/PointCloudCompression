@@ -14,10 +14,19 @@ clean:
 	rm serial
 	
 run:
-	./serial -s 4 4 ../output/serial.pcs ../input/clouds/ #| grep time
+	./serial -s 2 3 ../output/serial.pcs ../input/clouds/ #| grep time
 
 val:
-	valgrind --track-origins=yes --leak-check=full ./serial -s 2 2 ../output/test.pcs ../input/clouds/
+	valgrind --track-origins=yes --leak-check=full ./serial -s 16 2 ../output/test.pcs ../input/clouds/
 
 gdb:
-	gdb --args ./serial -s 4 6 ../output/test.pcs ../input/clouds/
+	gdb --args ./serial -s 8 2 ../output/test.pcs ../input/clouds/
+
+small:
+	./serial -s 2 2 ../output/test.pcs ../input/small/
+
+gdb_small:
+	gdb --args ./serial -s 2 2 ../output/test.pcs ../input/small/
+
+val_small:
+	valgrind --track-origins=yes --leak-check=full ./serial -s 8 2 ../output/test.pcs ../input/small/
